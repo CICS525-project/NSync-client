@@ -19,6 +19,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class NSyncClient {
     public static BlockingQueue<SendObject> toSendQ;
+    public static BlockingQueue<SendObject> eventsQ;
     public static BlockingQueue<SendObject> sentQ;
     public static final Path dir = Paths.get("C:\\Users\\Ali\\Documents\\NetBeansProjects\\FolderWatcher\\FolderWatched");
 
@@ -29,6 +30,7 @@ public class NSyncClient {
         // creating the queues:
         toSendQ = new LinkedBlockingQueue<SendObject>();
         sentQ = new LinkedBlockingQueue<SendObject>();
+        eventsQ = new LinkedBlockingQueue<SendObject>();
         //creating new folderWatcher, DBManager, and Communication classes
         try {
             new FolderWatcher();

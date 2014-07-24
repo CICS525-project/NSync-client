@@ -41,7 +41,7 @@ public class FolderWatcher {
     private final Map<WatchKey, Path> keys;
     private final Path dir = NSyncClient.dir;
     //private static BlockingQueue<SendObject> toSendQ = NSyncClient.toSendQ;
-    private static BlockingQueue<SendObject> toSendQ = new LinkedBlockingQueue<SendObject>();
+    private static BlockingQueue<SendObject> eventsQ = NSyncClient.eventsQ;
 
     public FolderWatcher() throws IOException {
         watcher = FileSystems.getDefault().newWatchService();
@@ -111,7 +111,7 @@ public class FolderWatcher {
                         isADirectory(directory.toString() + "\\" + fileNamePath1.getFileName()), 
                         fileNamePath1.getFileName().toString());
 
-                toSendQ.add(sendObject);
+                eventsQ.add(sendObject);
                 System.out.println("\033[34mSENDOBJECT(Rename) CREATED AND ADDED TO THE QUEUE\n");
             } else {
 
@@ -170,7 +170,7 @@ public class FolderWatcher {
                             eventType, fileLastModified(directory.toString() + "\\" + fileNamePath.getFileName()),
                             isADirectory(directory.toString() + "\\" + fileNamePath.getFileName()), null);
 
-                    toSendQ.add(sendObject);
+                    eventsQ.add(sendObject);
                     System.out.println("\033[34mSENDOBJECT(" + kind.name() + ") CREATED AND ADDED TO THE QUEUE\n");
                     //increasing i
                     i++;
