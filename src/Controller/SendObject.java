@@ -6,6 +6,9 @@
 
 package Controller;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.security.MessageDigest;
 import java.util.Date;
 
 /**
@@ -20,9 +23,10 @@ public class SendObject {
     private boolean enteredIntoDB;
     private Date timeStamp;
     private boolean isAFolder;
-
-    
-     public enum EventType {
+    private String hash;
+    private String ID;
+  
+    public enum EventType {
         Create, Delete, Rename, Modify
     }
 
@@ -40,6 +44,7 @@ public class SendObject {
         this.timeStamp = timeStamp;
         this.isAFolder = isAFolder;
         this.enteredIntoDB = false;
+        this.setHash();
         
     }
     
@@ -140,5 +145,69 @@ public class SendObject {
     public void setTimeStamp(Date timeStamp) {
         this.timeStamp = timeStamp;
     }
+    
+    /**
+     * @return the ID
+     */
+    public String getID() {
+        return ID;
+    }
+
+    /**
+     * @param ID the ID to set
+     */
+    public void setID(String ID) {
+        this.ID = ID;
+    }
+    
+     /**
+     * @return the hash
+     */
+    public String getHash() {
+        return hash;
+    }
+
+    /**
+     * @param hash the hash to set
+     */
+    public void setHash() {
+        try {
+            if(event == EventType.Rename){
+                this.hash = getChecksum(NSyncClient.dir.toString() + "\\" + this.filePath + "\\" + this.newFileName, "MD5");
+            } else {
+                this.hash = getChecksum(NSyncClient.dir.toString() + "\\" + this.filePath + "\\" + this.fileName, "MD5");
+            }
+        } catch (Exception e){
+            System.out.println("Exception during creating hash of the file (" + this.fileName + ")" + e.getMessage());
+        }
+    }
+    
+    /*
+    Creating the hash for the file
+    */
+    public static String getChecksum(String filename, String algo) throws Exception {  
+      byte[] b = createChecksum(filename, algo);  
+      String result = "";  
+      for (int i=0; i < b.length; i++) {  
+           result +=  
+                     Integer.toString( ( b[i] & 0xff ) + 0x100, 16).substring( 1 );  
+      }  
+      return result;  
+    }  
+    
+    public static byte[] createChecksum(String filename, String algo) throws Exception{  
+      InputStream fis = new FileInputStream(filename);  
+      byte[] buffer = new byte[1024];  
+      MessageDigest complete = MessageDigest.getInstance(algo); //One of the following "SHA-1", "SHA-256", "SHA-384", and "SHA-512"  
+      int numRead;  
+      do {  
+           numRead = fis.read(buffer);  
+           if (numRead > 0) {  
+                complete.update(buffer, 0, numRead);  
+           }  
+      } while (numRead != -1);  
+      fis.close();  
+      return complete.digest();  
+ }  
     
 }

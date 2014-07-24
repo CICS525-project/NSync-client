@@ -39,7 +39,7 @@ public class FolderWatcher {
 
     private final WatchService watcher;
     private final Map<WatchKey, Path> keys;
-    private final Path dir = Paths.get("C:\\Users\\Ali\\Documents\\NetBeansProjects\\FolderWatcher\\FolderWatched");
+    private final Path dir = NSyncClient.dir;
     //private static BlockingQueue<SendObject> toSendQ = NSyncClient.toSendQ;
     private static BlockingQueue<SendObject> toSendQ = new LinkedBlockingQueue<SendObject>();
 

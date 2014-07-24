@@ -8,6 +8,8 @@ package Controller;
 
 import FolderWatcher.FolderWatcher;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -18,6 +20,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class NSyncClient {
     public static BlockingQueue<SendObject> toSendQ;
     public static BlockingQueue<SendObject> sentQ;
+    public static final Path dir = Paths.get("C:\\Users\\Ali\\Documents\\NetBeansProjects\\FolderWatcher\\FolderWatched");
+
     /**
      * @param args the command line arguments
      */
