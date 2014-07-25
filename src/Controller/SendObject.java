@@ -24,7 +24,8 @@ public class SendObject {
     private Date timeStamp;
     private boolean isAFolder;
     private String hash;
-    private String ID;
+    private String ID;      //this is the file ID
+    private String userID;
   
     public enum EventType {
         Create, Delete, Rename, Modify
@@ -33,6 +34,7 @@ public class SendObject {
     
     public SendObject() {
         enteredIntoDB = false;
+        this.userID = userProperties.userID;
     }
     
     public SendObject(String fileName,String filePath,EventType event, Date timeStamp, 
@@ -45,7 +47,7 @@ public class SendObject {
         this.isAFolder = isAFolder;
         this.enteredIntoDB = false;
         this.setHash();
-        
+        this.userID = userProperties.userID;
     }
     
     /**
