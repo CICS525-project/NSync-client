@@ -34,7 +34,7 @@ public class SendObject {
     
     public SendObject() {
         enteredIntoDB = false;
-        this.userID = userProperties.userID;
+        this.userID = UserProperties.userID;
     }
     
     public SendObject(String fileName,String filePath,EventType event, Date timeStamp, 
@@ -47,7 +47,7 @@ public class SendObject {
         this.isAFolder = isAFolder;
         this.enteredIntoDB = false;
         this.setHash();
-        this.userID = userProperties.userID;
+        this.userID = UserProperties.userID;
     }
     
     /**

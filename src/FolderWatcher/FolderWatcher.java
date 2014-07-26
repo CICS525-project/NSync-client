@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package FolderWatcher;
 
 import Controller.NSyncClient;
@@ -30,11 +25,6 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-
-/**
- *
- * @author Ali
- */
 public class FolderWatcher {
 
     private final WatchService watcher;

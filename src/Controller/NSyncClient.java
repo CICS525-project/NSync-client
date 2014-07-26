@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package Controller;
 
 import FolderWatcher.FolderWatcher;
@@ -13,30 +7,30 @@ import java.nio.file.Paths;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-/**
- *
- * @author Ali
- */
 public class NSyncClient {
-    public static BlockingQueue<SendObject> toSendQ;
-    public static BlockingQueue<SendObject> eventsQ;
-    public static BlockingQueue<SendObject> sentQ;
-    public static final Path dir = Paths.get("C:\\Users\\Ali\\Documents\\NetBeansProjects\\FolderWatcher\\FolderWatched");
+	public static BlockingQueue<SendObject> toSendQ;
+	public static BlockingQueue<SendObject> eventsQ;
+	public static BlockingQueue<SendObject> sentQ;
+	public static final Path dir = Paths.get(System.getProperty("user.home")
+			+ "\\NSync"); // in your user directory, NSYNC is created
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // creating the queues:
-        toSendQ = new LinkedBlockingQueue<SendObject>();
-        sentQ = new LinkedBlockingQueue<SendObject>();
-        eventsQ = new LinkedBlockingQueue<SendObject>();
-        //creating new folderWatcher, DBManager, and Communication classes
-        try {
-            new FolderWatcher();
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-    
+	/**
+	 * @param args
+	 *            the command line arguments
+	 */
+	public static void main(String[] args) {
+		// creating the queues:
+		toSendQ = new LinkedBlockingQueue<SendObject>();
+		sentQ = new LinkedBlockingQueue<SendObject>();
+		eventsQ = new LinkedBlockingQueue<SendObject>();
+
+		// creating new folderWatcher, DBManager, and Communication classes
+		try {
+			ClientHelper.initializeClient();
+			new FolderWatcher();
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+
 }
