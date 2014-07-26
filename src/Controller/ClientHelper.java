@@ -43,28 +43,37 @@ public class ClientHelper {
 		if (userParams == null) {
 			startClientGUI();
 		} else {
-			UserProperties.setQueueName(userParams.get("queuename"));
-			UserProperties.setUsername(userParams.get("username"));
-			UserProperties.setPassword(userParams.get("password"));
-			
-			System.out.println(userParams.get("queuename"));
-			
-			// if the client can connect to a server do other things
-			if (Connection.isServerUp()) {
-				// sync files
-				syncFilesAtStartUp(null);
-
-				// continuallySyncFiles(null);
-			} else {
-				TrayIconBasic
-						.displayMessage(
-								"ERROR",
-								"Connection to server unavailable. All changes would be stored locally",
-								TrayIcon.MessageType.ERROR);
-			}
+			performSync();
 		}
 
-		
+	}
+	
+	public static void performSync() {
+		Map<String, String> userParams = null;
+		try {
+			userParams = loggedInBefore();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		UserProperties.setQueueName(userParams.get("queuename"));
+		UserProperties.setUsername(userParams.get("username"));
+		UserProperties.setPassword(userParams.get("password"));
+
+		System.out.println(userParams.get("queuename"));
+
+		// if the client can connect to a server do other things
+		if (Connection.isServerUp()) {
+			// sync files
+			syncFilesAtStartUp(null);
+
+			// continuallySyncFiles(null);
+		} else {
+			TrayIconBasic
+					.displayMessage(
+							"ERROR",
+							"Connection to server unavailable. All changes would be stored locally",
+							TrayIcon.MessageType.ERROR);
+		}
 	}
 
 	public static UserProperties performAuthentication() {
@@ -213,26 +222,30 @@ public class ClientHelper {
 		// call db method to login
 		// the line below is just for demo purposes
 		String queuename = null;
-		try {
-			queuename = retrieveQueueName();
-			
-		} catch (IOException e) {			
-			e.printStackTrace();
-			return false;
-		}
+
 		if (username.equals("democontainer")
-				&& password.equals("democontainer")
-				&& queuename.length() > 2) {
+				&& password.equals("democontainer")) {
+
+			try {
+				//check if the user signed up first before logging in
+				queuename = retrieveQueueName();
+				File file = new File(System.getProperty("user.dir")
+						+ "/src/Settings/temp.txt");
+				if (file.exists()) {
+					file.delete();
+				}
+			} catch (IOException e) {
+				//e.printStackTrace();
+				//check if the user already has an account but logged in another client
+				queuename = createQueue(username);
+			}
+
 			writeUserParamsToFile(username, password, queuename);
 			TrayIconBasic.displayMessage("Alert", "Login Successful",
 					TrayIcon.MessageType.INFO);
 			cg.dispose();
 			// delete the temp file
-			File file = new File(System.getProperty("user.dir")
-					+ "/src/Settings/temp.txt");
-			if (file.exists()) {
-				file.delete();
-			}
+			performSync();
 			return true;
 		}
 

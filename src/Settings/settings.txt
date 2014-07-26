@@ -1,3 +1,0 @@
-username - democontainer
-password - democontainer
-queuename - null1406409931385
