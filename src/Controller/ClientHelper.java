@@ -149,8 +149,6 @@ public class ClientHelper {
 
 	/* create a queue for the client. I still we should use a fixed queue */
 	private static String createQueue(String username) {
-		// UserProperties.setQueueName(User.getUsername() + new
-		// Date().getTime());
 		String queuename = username + new Date().getTime();
 		QueueManager.createQueue(queuename);
 		return queuename;
