@@ -107,14 +107,9 @@ public class Connection {
 		return connParams.get("url");
 	}
 
-	public static boolean isServerUp() {
-		
-		System.out.println(serverId);
-		System.out.println(serverPort);
-		Map<String, String> connParams = getServerConnectionParams(serverId);
-		
-		System.out.println(connParams.get("serverIP"));
-		
+	public static boolean isServerUp() {		
+		Map<String, String> connParams = getServerConnectionParams(serverId);		
+		System.out.println(connParams.get("serverIP"));		
 		System.setProperty("javax.net.ssl.keyStore",
 				System.getProperty("user.dir")
 						+ "\\src\\Settings\\clientkeystore.jks");

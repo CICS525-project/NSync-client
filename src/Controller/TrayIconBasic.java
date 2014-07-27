@@ -9,13 +9,24 @@ import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
+
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
  
 public class TrayIconBasic {
 	
 	private static TrayIcon trayIcon;
     
     public TrayIconBasic() {
+    	
+    	try {
+			UIManager
+					.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	
         if (!SystemTray.isSupported()) {
             // Go directory to the task;
             return;
@@ -40,6 +51,7 @@ public class TrayIconBasic {
         // Create popup menu
         PopupMenu popup = new PopupMenu();
         MenuItem exit = new MenuItem("Exit");
+        MenuItem shareFiles = new MenuItem("Share Files");
  
         exit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -48,8 +60,18 @@ public class TrayIconBasic {
                 System.exit(0);
             }
         });
+        
+        shareFiles.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Do some cleanup
+               JOptionPane.showMessageDialog(null, "Coming soon!!!");
+            }
+        });
  
+        popup.add(shareFiles);
+        popup.addSeparator();
         popup.add(exit);
+      
  
          
         // Add tooltip and menu to trayicon

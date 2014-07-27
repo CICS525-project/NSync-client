@@ -125,28 +125,6 @@ public class ClientHelper {
 		System.out.println("Continually sync thread started");
 	}
 
-	public static void maintainConnection() {
-		// constantly tell the server you are around
-		new Runnable() {
-			public void run() {
-				// add the socket code to communicate with server here
-
-				Process p1 = null;
-				try {
-					p1 = java.lang.Runtime.getRuntime().exec(
-							"ping www.google.com");
-					System.out.println(p1.waitFor());
-				} catch (IOException ex) {
-					Logger.getLogger(ClientHelper.class.getName()).log(
-							Level.SEVERE, null, ex);
-				} catch (InterruptedException ex) {
-					Logger.getLogger(ClientHelper.class.getName()).log(
-							Level.SEVERE, null, ex);
-				}
-			}
-		};
-	}
-
 	/* create a queue for the client. I still we should use a fixed queue */
 	private static String createQueue(String username) {
 		String queuename = username + new Date().getTime();
