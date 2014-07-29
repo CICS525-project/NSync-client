@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class FolderWatcher {
+public class FolderWatcher implements Runnable  {
 
     private final WatchService watcher;
     private final Map<WatchKey, Path> keys;
@@ -40,6 +40,18 @@ public class FolderWatcher {
         this.registerAllFolders(dir);
         this.eventHandler();
 
+    }
+    
+    public void run()
+    {
+    	try 
+    	{
+			this.eventHandler();
+		} 
+    	catch (IOException e) 
+    	{
+			e.printStackTrace();
+		}
     }
 
     private void register(Path directory) throws IOException {
