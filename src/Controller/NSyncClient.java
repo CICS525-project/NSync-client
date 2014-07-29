@@ -23,7 +23,10 @@ public class NSyncClient {
 		toSendQ = new LinkedBlockingQueue<SendObject>();
 		sentQ = new LinkedBlockingQueue<SendObject>();
 		eventsQ = new LinkedBlockingQueue<SendObject>();
-
+		/* static variables to initialize folderwatcher and dbcontroller
+		public static DBController dbc;
+	    public static FolderWatcher fw;
+		*/
 		// creating new folderWatcher, DBManager, and Communication classes
 		try {
 			ClientHelper.initializeClient();
