@@ -28,6 +28,12 @@ public class NSyncClient {
 		try {
 			ClientHelper.initializeClient();
 			new FolderWatcher();
+			/* new initialization for dbmanager and folder watcher folder watcher needs to run as a thread
+			fw = new FolderWatcher();
+            new Thread(fw).start();
+            dbc = new DBController(eventsQ, toSendQ, sentQ);
+            new Thread(dbc).start();
+            */
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		}
