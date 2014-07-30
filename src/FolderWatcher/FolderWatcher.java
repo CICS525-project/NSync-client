@@ -38,7 +38,6 @@ public class FolderWatcher implements Runnable  {
         this.keys = new HashMap<WatchKey, Path>();
 
         this.registerAllFolders(dir);
-        this.eventHandler();
 
     }
     
@@ -46,12 +45,12 @@ public class FolderWatcher implements Runnable  {
     {
     	try 
     	{
-			this.eventHandler();
+            this.eventHandler();
 		} 
     	catch (IOException e) 
     	{
-			e.printStackTrace();
-		}
+            e.printStackTrace();
+        }
     }
 
     private void register(Path directory) throws IOException {

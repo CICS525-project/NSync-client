@@ -34,7 +34,8 @@ public class NSyncClient {
 			Thread t = new Thread(new DBController(eventsQ, sentQ, toSendQ));
 			t.start();
 			ClientHelper.initializeClient();
-			new FolderWatcher();
+			Thread tFolderWatcher = new Thread(new FolderWatcher());
+                        tFolderWatcher.start();
 			/* new initialization for dbmanager and folder watcher folder watcher needs to run as a thread
 			fw = new FolderWatcher();
             new Thread(fw).start();
