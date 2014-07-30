@@ -107,9 +107,9 @@ public class Connection {
 		return connParams.get("url");
 	}
 
-	public static boolean isServerUp() {		
-		Map<String, String> connParams = getServerConnectionParams(serverId);		
-		System.out.println(connParams.get("serverIP"));		
+	public static boolean isServerUp() {
+		Map<String, String> connParams = getServerConnectionParams(serverId);
+		System.out.println(connParams.get("serverIP"));
 		System.setProperty("javax.net.ssl.keyStore",
 				System.getProperty("user.dir")
 						+ "\\src\\Settings\\clientkeystore.jks");
@@ -126,8 +126,9 @@ public class Connection {
 			Registry registry = LocateRegistry.getRegistry(
 					connParams.get("serverIP"), serverPort,
 					new SslRMIClientSocketFactory());
-			server = (NsyncServerInterface) registry.lookup("ServerInterfaceImpl");
-			server.findScore("Ali");
+			server = (NsyncServerInterface) registry
+					.lookup("ServerInterfaceImpl");
+			server.isUp();
 			return true;
 		} catch (NotBoundException | RemoteException e) {
 			e.printStackTrace();
@@ -141,7 +142,7 @@ public class Connection {
 						new SslRMIClientSocketFactory());
 				server = (NsyncServerInterface) registry
 						.lookup("ServerInterfaceImpl");
-				server.findScore("Ali");
+				server.isUp();
 				return true;
 			} catch (NotBoundException | RemoteException e2) {
 				e2.printStackTrace();
@@ -155,7 +156,7 @@ public class Connection {
 							new SslRMIClientSocketFactory());
 					server = (NsyncServerInterface) registry
 							.lookup("ServerInterfaceImpl");
-					server.findScore("Ali");
+					server.isUp();
 					return true;
 				} catch (NotBoundException | RemoteException e3) {
 					e3.printStackTrace();
@@ -165,7 +166,7 @@ public class Connection {
 		}
 		// return false;
 	}
-	
+
 	public static void main(String[] args) {
 		Connection.isServerUp();
 	}

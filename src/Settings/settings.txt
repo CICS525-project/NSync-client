@@ -1,0 +1,3 @@
+username - democontainer
+password - democontainer
+queuename - democontainer1406599595330

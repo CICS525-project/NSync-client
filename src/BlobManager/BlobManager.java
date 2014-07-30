@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 public class BlobManager {
 	// add the username to this string instead of default
 
-	private static String containerName = UserProperties.getUsername().trim();
+	private static String containerName = "democontainer"; // UserProperties.getUsername().trim();
 	private static String url = Connection.getURL() + containerName + "/";
 
 	// remember to set container name back to user if you have to change it for
@@ -137,7 +137,9 @@ public class BlobManager {
 			for (ListBlobItem blobItem : container.listBlobs(startsWith, true,
 					details, null, null)) {
 				System.out.println(blobItem.getUri().toString()
-						.substring(url.length()));
+						.substring(url.length()-1));
+				CloudBlob b = (CloudBlob)blobItem;
+				//b.acquireLease(60, "dddddddddddddddddddddddddddddddd");
 				list.add(blobItem.getUri().toString().substring(url.length()));
 			}
 		} catch (URISyntaxException | InvalidKeyException | StorageException ex) {
@@ -376,10 +378,10 @@ public class BlobManager {
 		// BlobManager.uploadFileAsBlob("C:\\Watcher\\hello.txt");
 		// BlobManager.uploadFileAsBlob("C:\\Watcher\\myname2\\hithere.txt");
 		// BlobManager.uploadFileAsBlob("C:\\Watcher\\myname2\\pp.txt");
-		// BlobManager.getBlobsList();
-		BlobManager.downloadAllBlobs();
-		// BlobManager.renameBlob("C:/Watcher/myname3", "C:/Watcher/myname2");
-
-		// BlobManager.deleteBlob("C:/Watcher/store2");
+		 BlobManager.getBlobsList("fish");
+		// BlobManager.downloadAllBlobs();
+		
+	//	CloudBlob blob = (CloudBlob) blobItem;
+		
 	}
 }

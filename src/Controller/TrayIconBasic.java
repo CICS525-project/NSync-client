@@ -70,9 +70,7 @@ public class TrayIconBasic {
  
         popup.add(shareFiles);
         popup.addSeparator();
-        popup.add(exit);
-      
- 
+        popup.add(exit); 
          
         // Add tooltip and menu to trayicon
         trayIcon.setToolTip("NSync");

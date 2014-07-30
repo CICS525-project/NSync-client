@@ -1,9 +1,14 @@
 package Communication;
 import java.rmi.*;
 
-public interface NsyncServerInterface extends Remote {
-    public double findScore(String name) throws RemoteException;    
+import Controller.SendObject;
+
+public interface NsyncServerInterface extends Remote {    
     
-    public String echoIP(ClientInterface client) throws RemoteException;
+    public boolean getPermission(String queueName) throws RemoteException;
+    
+    public SendObject processSendObject(SendObject s);
+    
+    public boolean isUp() throws RemoteException;
     
 }

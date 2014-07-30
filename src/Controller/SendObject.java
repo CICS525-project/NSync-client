@@ -1,21 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package Controller;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.security.MessageDigest;
 import java.util.Date;
 
-/**
- *
- * @author Ali
- */
-public class SendObject {
+public class SendObject implements Serializable {
     private String fileName;
     private String newFileName;  //used just in case of a Rename event
     private String filePath;    //relative filePath
@@ -26,6 +17,8 @@ public class SendObject {
     private String hash;
     private String ID;      //this is the file ID
     private String userID;
+    
+    private static final long serialVersionUID = 1L;
   
     public enum EventType {
         Create, Delete, Rename, Modify
@@ -34,7 +27,7 @@ public class SendObject {
     
     public SendObject() {
         enteredIntoDB = false;
-        this.userID = UserProperties.userID;
+        this.setUserID(UserProperties.userID);
     }
     
     public SendObject(String fileName,String filePath,EventType event, Date timeStamp, 
@@ -47,7 +40,7 @@ public class SendObject {
         this.isAFolder = isAFolder;
         this.enteredIntoDB = false;
         this.setHash();
-        this.userID = UserProperties.userID;
+        this.setUserID(UserProperties.userID);
     }
     
     /**
@@ -210,6 +203,20 @@ public class SendObject {
       } while (numRead != -1);  
       fis.close();  
       return complete.digest();  
- }  
+ }
+
+	/**
+	 * @return the userID
+	 */
+	public String getUserID() {
+		return userID;
+	}
+
+	/**
+	 * @param userID the userID to set
+	 */
+	public void setUserID(String userID) {
+		this.userID = userID;
+	}  
     
 }

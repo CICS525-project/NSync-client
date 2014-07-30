@@ -2,6 +2,7 @@ package DBManager;
 
 import java.util.concurrent.BlockingQueue;
 
+import Controller.NSyncClient;
 import Controller.SendObject;
 
 /**
@@ -39,8 +40,13 @@ public class DBController implements Runnable
 	{
 		DBManagerLocal.startDatabase();
 
+		//eqm = new DBEventsQManager(eventsQ, toSendQ);
+		//sqm = new DBSentQManager(sentQ);
+		
 		eqm = new DBEventsQManager(eventsQ, toSendQ);
 		sqm = new DBSentQManager(sentQ);
+
+		
 		new Thread(eqm).start();
 		new Thread(sqm).start();
 	}

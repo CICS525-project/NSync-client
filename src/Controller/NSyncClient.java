@@ -1,6 +1,8 @@
 package Controller;
 
+import DBManager.DBController;
 import FolderWatcher.FolderWatcher;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,6 +31,8 @@ public class NSyncClient {
 		*/
 		// creating new folderWatcher, DBManager, and Communication classes
 		try {
+			Thread t = new Thread(new DBController(eventsQ, sentQ, toSendQ));
+			t.start();
 			ClientHelper.initializeClient();
 			new FolderWatcher();
 			/* new initialization for dbmanager and folder watcher folder watcher needs to run as a thread
