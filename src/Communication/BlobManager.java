@@ -1,4 +1,4 @@
-package BlobManager;
+package Communication;
 
 import Communication.Connection;
 

@@ -1,5 +1,6 @@
 package Controller;
 
+import GUI.ClientHelper;
 import DBManager.DBController;
 import FolderWatcher.FolderWatcher;
 

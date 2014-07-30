@@ -106,6 +106,13 @@ public class FolderWatcher implements Runnable  {
                 WatchEvent<Path> ev1 = (WatchEvent<Path>) event1;
                 Path fileNamePath1 = ev1.context();
                 
+                WatchEvent.Kind<?> kind = event1.kind();
+                
+                if (kind == ENTRY_CREATE) {
+                        if (Files.isDirectory(directory, NOFOLLOW_LINKS)) {
+                            this.registerAllFolders(directory);
+                        }
+                    }
                 
                 SendObject sendObject = new SendObject(fileNamePath0.getFileName().toString(), dirRelativePath0.toString(),
                         SendObject.EventType.Rename, fileLastModified(directory.toString() + "\\" + fileNamePath1.getFileName()),

@@ -1,8 +1,11 @@
-package Controller;
+package GUI;
 
-import BlobManager.BlobManager;
+import Communication.BlobManager;
 import Communication.Connection;
 import Communication.QueueManager;
+import Controller.NSyncClient;
+import Controller.SendObject;
+import Controller.UserProperties;
 
 import java.awt.EventQueue;
 import java.awt.TrayIcon;
