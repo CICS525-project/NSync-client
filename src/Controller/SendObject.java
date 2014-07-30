@@ -27,7 +27,7 @@ public class SendObject implements Serializable {
     
     public SendObject() {
         enteredIntoDB = false;
-        this.setUserID(UserProperties.userID);
+        this.setUserID(UserProperties.getUsername());
     }
     
     public SendObject(String fileName,String filePath,EventType event, Date timeStamp, 

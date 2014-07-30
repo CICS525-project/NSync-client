@@ -434,7 +434,7 @@ public class ClientHelper {
 												r.getNewFileName(),
 												r.getFileName());
 									}
-									NSyncClient.sentQ.add(r);
+									NSyncClient.sentQ.put(r);
 								}
 							}
 						} catch (InterruptedException e) {
