@@ -177,6 +177,10 @@ public class SendObject implements Serializable {
         }
     }
     
+    public void setHash(String hash) {
+    	this.hash = hash;
+    }
+    
     /*
     Creating the hash for the file
     */

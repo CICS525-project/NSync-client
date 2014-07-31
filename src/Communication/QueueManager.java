@@ -191,7 +191,7 @@ public class QueueManager {
 		s = o.getFileName() + "|" + o.getNewFileName() + "|" + o.getFilePath()
 				+ "|" + o.getEvent().toString() + "|" + enteredInDB + "|"
 				+ o.getTimeStamp().toString() + "|" + isAFolder + "|"
-				+ o.getHash() + "|" + o.getID();
+				+ o.getHash() + "|" + o.getID() + "|" + o.getUserID();
 		return s;
 	}
 
@@ -205,9 +205,9 @@ public class QueueManager {
 		o.setEnteredIntoDB(check(parts[4]));
 		o.setTimeStamp(new Date(parts[5]));
 		o.setIsAFolder(check(parts[6]));
-		//o.setHash();
+		o.setHash(parts[7]);
 		o.setID(parts[8]);
-		o.setUserID(UserProperties.getUsername());
+		o.setUserID(parts[9]);
 		return o;
 	}
 

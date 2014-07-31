@@ -24,7 +24,7 @@ public class FileFunctions {
     }
 
     public static String getRelativePath(String fullPath) {
-        return fullPath.substring(11);
+        return fullPath.substring((System.getProperty("user.home") + "/NSync/").length());
     }
 
     public static String getExtension(String fullPath) {

@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 public class BlobManager {
 	// add the username to this string instead of default
 
-	private static String containerName = "democontainer"; // UserProperties.getUsername().trim();
+	private static String containerName = UserProperties.getUsername().trim();
 	private static String url = Connection.getURL() + containerName + "/";
 
 	// remember to set container name back to user if you have to change it for
@@ -137,9 +137,9 @@ public class BlobManager {
 			for (ListBlobItem blobItem : container.listBlobs(startsWith, true,
 					details, null, null)) {
 				System.out.println(blobItem.getUri().toString()
-						.substring(url.length()-1));
-				CloudBlob b = (CloudBlob)blobItem;
-				//b.acquireLease(60, "dddddddddddddddddddddddddddddddd");
+						.substring(url.length() - 1));
+				CloudBlob b = (CloudBlob) blobItem;
+				// b.acquireLease(60, "dddddddddddddddddddddddddddddddd");
 				list.add(blobItem.getUri().toString().substring(url.length()));
 			}
 		} catch (URISyntaxException | InvalidKeyException | StorageException ex) {
@@ -153,7 +153,7 @@ public class BlobManager {
 	public synchronized static void downloadAllBlobs() {
 		Connection.watchFolder = false;
 		String filePath = UserProperties.getDirectory();
-		System.out.println("The conn string is  " +  filePath);
+		System.out.println("The conn string is  " + filePath);
 		FileOutputStream fos = null;
 		try {
 			CloudStorageAccount storageAccount = CloudStorageAccount
@@ -175,7 +175,7 @@ public class BlobManager {
 					File yourFile = new File(filePath + blob.getName());
 					if (!yourFile.exists()) {
 						yourFile.getParentFile().mkdirs();
-					}					
+					}
 
 					// System.out.println("The size of the meta is " +
 					// meta.size());
@@ -223,7 +223,7 @@ public class BlobManager {
 					e.printStackTrace();
 				}
 			}
-		} finally {			
+		} finally {
 			if (fos != null) {
 				try {
 					fos.close();
@@ -330,11 +330,26 @@ public class BlobManager {
 					.getContainerReference(containerName);
 			System.out.println("The old path is " + url + oldName
 					+ " and the new path is " + url + newName);
-			CloudBlob oldBlob = container.getBlockBlobReference(url + oldName);
-			CloudBlob newBlob = container.getBlockBlobReference(url + newName);
+			CloudBlob oldBlob = container.getBlockBlobReference(oldName);
+			CloudBlob newBlob = container.getBlockBlobReference(newName);
+			File f = null;
+			if (!newBlob.exists()) {
+				// String path = System.getProperty("user.home") + "/Nsync/" +
+				// newName;
+				String path = System.getProperty("user.home") + "\\Desktop"
+						+ "\\p.txt";
+				System.out.println("The path is " + path);
+				f = new File(path);
+				if (!f.exists()) {
+					f.createNewFile();
+				}
+				newBlob.uploadFromFile(path);
+			}
 			newBlob.startCopyFromBlob(oldBlob);
 			oldBlob.delete();
-		} catch (URISyntaxException | InvalidKeyException | StorageException ex) {
+			f.delete();
+		} catch (URISyntaxException | InvalidKeyException | StorageException
+				| IOException ex) {
 			Logger.getLogger(BlobManager.class.getName()).log(Level.SEVERE,
 					null, ex);
 		}
@@ -348,7 +363,6 @@ public class BlobManager {
 		try {
 			CloudStorageAccount storageAccount = CloudStorageAccount
 					.parse(Connection.getStorageConnectionString());
-
 			CloudBlobClient blobClient = storageAccount.createCloudBlobClient();
 			CloudBlobContainer container = blobClient
 					.getContainerReference(containerName);
@@ -363,6 +377,7 @@ public class BlobManager {
 				CloudBlob newBlob = container.getBlockBlobReference(nName);
 				CloudBlob oldBlob = container.getBlockBlobReference(oName);
 				System.out.println("The blob names are " + blob.getName());
+				System.out.println("The copy status is " + blob.getCopyState());
 				newBlob.startCopyFromBlob(oldBlob);
 				oldBlob.delete();
 			}
@@ -375,13 +390,20 @@ public class BlobManager {
 	}
 
 	public static void main(String[] args) {
-		// BlobManager.uploadFileAsBlob("C:\\Watcher\\hello.txt");
+
+		System.out.println(Connection.serverId);
+
+		// BlobManager.uploadFileAsBlob("C:\\Users\\welcome\\NSync\\ti34\\group5.txt");
+
+		BlobManager.renameBlob("C:\\Users\\welcome\\NSync\\ti34\\group10.txt",
+				"C:\\Users\\welcome\\NSync\\ti34\\group5.txt");
+
 		// BlobManager.uploadFileAsBlob("C:\\Watcher\\myname2\\hithere.txt");
 		// BlobManager.uploadFileAsBlob("C:\\Watcher\\myname2\\pp.txt");
-		 BlobManager.getBlobsList("fish");
+		// BlobManager.getBlobsList("fish");
 		// BlobManager.downloadAllBlobs();
-		
-	//	CloudBlob blob = (CloudBlob) blobItem;
-		
+
+		// CloudBlob blob = (CloudBlob) blobItem;
+
 	}
 }
