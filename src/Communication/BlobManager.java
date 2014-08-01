@@ -5,7 +5,6 @@ import Communication.CommunicationManager;
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.blob.BlobListingDetails;
-import com.microsoft.azure.storage.blob.BlobType;
 import com.microsoft.azure.storage.blob.CloudBlob;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
 import com.microsoft.azure.storage.blob.CloudBlobContainer;
@@ -22,7 +21,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -58,7 +56,6 @@ public class BlobManager {
 
 	public static void uploadFileAsBlob(String fullPath) {
 
-		// TODO Auto-generated method stub
 		FileInputStream fis = null;
 		try {
 			CloudStorageAccount storageAccount = CloudStorageAccount
@@ -66,30 +63,11 @@ public class BlobManager {
 			CloudBlobClient blobClient = storageAccount.createCloudBlobClient();
 			CloudBlobContainer container = blobClient
 					.getContainerReference(containerName);
-			// System.out.println("The relative path is " +
-			// FileFunctions.getRelativePath(fullPath));
 			CloudBlockBlob blob = container.getBlockBlobReference(FileFunctions
 					.getRelativePath(fullPath));
-
 			File source = new File(fullPath);
 			if (source.exists()) {
-
-				if (blob.exists()) {
-					blob.downloadAttributes();
-
-					if (new Date(blob.getMetadata().get("dateModified"))
-							.after(new Date((FileFunctions
-									.convertTimeToUTC(FileFunctions
-											.convertTimestampToDate(source
-													.lastModified())))))) {
-						System.out.println(source.getName()
-								+ " is up to date so it is not uploaded");
-						return;
-					}
-				}
-
 				fis = new FileInputStream(source);
-				System.gc();
 				HashMap<String, String> meta = new HashMap<String, String>();
 				meta.put("dateModified", FileFunctions
 						.convertTimeToUTC(FileFunctions
@@ -139,7 +117,7 @@ public class BlobManager {
 					details, null, null)) {
 				System.out.println(blobItem.getUri().toString()
 						.substring(url.length() - 1));
-				CloudBlob b = (CloudBlob) blobItem;
+				//CloudBlob b = (CloudBlob) blobItem;
 				// b.acquireLease(60, "dddddddddddddddddddddddddddddddd");
 				list.add(blobItem.getUri().toString().substring(url.length()));
 			}
@@ -147,12 +125,11 @@ public class BlobManager {
 			Logger.getLogger(BlobManager.class.getName()).log(Level.SEVERE,
 					null, ex);
 		}
-		// System.out.println(url);
 		return list;
 	}
 
 	public synchronized static void downloadAllBlobs() {
-		CommunicationManager.watchFolder = false;
+		// CommunicationManager.watchFolder = false;
 		String filePath = UserProperties.getDirectory();
 		System.out.println("The conn string is  " + filePath);
 		FileOutputStream fos = null;
@@ -162,7 +139,6 @@ public class BlobManager {
 			CloudBlobClient blobClient = storageAccount.createCloudBlobClient();
 			CloudBlobContainer container = blobClient
 					.getContainerReference(containerName);
-			// System.out.println("Container blob size is " + );
 			EnumSet<BlobListingDetails> details = EnumSet
 					.of(BlobListingDetails.METADATA);
 			for (ListBlobItem blobItem : container.listBlobs("", true, details,
@@ -170,46 +146,23 @@ public class BlobManager {
 				if (blobItem.getUri().toString().length() > 0) {
 					CloudBlob blob = (CloudBlob) blobItem;
 					blob.downloadAttributes();
-					HashMap<String, String> meta = new HashMap<String, String>();
-					meta = blob.getMetadata();
-					// System.out.println(filePath + blob.getName());
 					File yourFile = new File(filePath + blob.getName());
 					if (!yourFile.exists()) {
 						yourFile.getParentFile().mkdirs();
 					}
-
-					// System.out.println("The size of the meta is " +
-					// meta.size());
 					if (yourFile.exists()) {
 						System.out.println(yourFile.getName() + " does exist");
-						if (FileFunctions.checkIfDownload(yourFile, new Date(
-								meta.get("dateModified")))) {
-							fos = new FileOutputStream(filePath
-									+ blob.getName());
-							System.gc();
-							System.out.println(yourFile.getName()
-									+ " has just been updated");
-							blob.download(fos);
-							fos.close();
-						} else {
-							System.out.println(yourFile.getName()
-									+ " is up to date");
-						}
+						fos = new FileOutputStream(filePath + blob.getName());
+						blob.download(fos);
+						fos.close();
 					} else {
 						System.out
 								.println(yourFile.getName()
 										+ "File does not exist. Downloading from server");
 						fos = new FileOutputStream(filePath + blob.getName());
-						System.gc();
-						// System.out.println("File last modified in " +
-						// FileFunctions.convertTimestampToDate(yourFile.lastModified()));
 						blob.download(fos);
 						fos.close();
 					}
-					if (yourFile.isFile())
-						yourFile.setLastModified(FileFunctions
-								.convertUTCToLocal(meta.get("dateModified"))
-								.getTime());
 				}
 			}
 		} catch (URISyntaxException | InvalidKeyException | StorageException
@@ -220,7 +173,6 @@ public class BlobManager {
 				try {
 					fos.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -229,12 +181,11 @@ public class BlobManager {
 				try {
 					fos.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		}
-		CommunicationManager.watchFolder = true;
+		// CommunicationManager.watchFolder = true;
 	}
 
 	public static void downloadBlob(String blobUri) {
@@ -334,9 +285,7 @@ public class BlobManager {
 			CloudBlob oldBlob = container.getBlockBlobReference(oldName);
 			CloudBlob newBlob = container.getBlockBlobReference(newName);
 			File f = null;
-			if (!newBlob.exists()) {
-				// String path = System.getProperty("user.home") + "/Nsync/" +
-				// newName;
+			if (!newBlob.exists()) {				
 				String path = System.getProperty("user.home") + "\\Desktop"
 						+ "\\p.txt";
 				System.out.println("The path is " + path);
@@ -390,21 +339,14 @@ public class BlobManager {
 		}
 	}
 
-	public static void main(String[] args) {
-
-		System.out.println(CommunicationManager.serverId);
-
+	/*public static void main(String[] args) {
+		//System.out.println(CommunicationManager.serverId);
 		// BlobManager.uploadFileAsBlob("C:\\Users\\welcome\\NSync\\ti34\\group5.txt");
-
-		BlobManager.renameBlob("C:\\Users\\welcome\\NSync\\ti34\\group10.txt",
-				"C:\\Users\\welcome\\NSync\\ti34\\group5.txt");
-
+		//BlobManager.renameBlob("C:\\Users\\welcome\\NSync\\ti34\\group10.txt","C:\\Users\\welcome\\NSync\\ti34\\group5.txt");
 		// BlobManager.uploadFileAsBlob("C:\\Watcher\\myname2\\hithere.txt");
 		// BlobManager.uploadFileAsBlob("C:\\Watcher\\myname2\\pp.txt");
 		// BlobManager.getBlobsList("fish");
 		// BlobManager.downloadAllBlobs();
-
 		// CloudBlob blob = (CloudBlob) blobItem;
-
-	}
+	} */
 }
