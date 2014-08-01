@@ -1,9 +1,14 @@
 package Communication;
 
-import java.io.File;
-
 import Controller.SendObject;
 import Controller.UserProperties;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class LocalFileManager {
 
@@ -34,7 +39,21 @@ public class LocalFileManager {
 		File newname = new File(newName);
 		oldname.renameTo(newname);
 	}
-
+        /*
+        receives a SendObject associated with a file in conflict and copies it with the 
+        new name given to it as a string in second parameter.
+        */
+        
+        public static void copyConflictedFile(SendObject sendObject, String newName) throws IOException{
+            String filePath = UserProperties.getDirectory()
+				+ pathParser(sendObject.getFilePath()) + sendObject.getFileName();
+            String newFilePath = UserProperties.getDirectory()
+				+ pathParser(sendObject.getFilePath()) + newName;
+            Files.copy(Paths.get(filePath), Paths.get(newFilePath), COPY_ATTRIBUTES);
+            
+        }
+        
+        
 	private static String pathParser(String s) {
 		if (s == null) {
 			return "";
@@ -43,7 +62,18 @@ public class LocalFileManager {
 		}
 	}
 
-	/*
+        /*
+	public static void main(String[] args){
+            SendObject sendObject = new SendObject("aaa.txt","",null, null, 
+            false, null);
+            try {
+                copyConflictedFile(sendObject, "bbb.txt");
+            } catch (IOException ex) {
+                Logger.getLogger(LocalFileManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        */
+        /*
 	 * public static void main(String[] args) { SendObject s = new SendObject();
 	 * s.setFileName("poos.mp3"); //s.setNewFileName("poos.mp3"); delete(s);
 	 * //rename(s); }
