@@ -1,11 +1,8 @@
 package GUI;
 
-import Communication.BlobManager;
+import Communication.ClientUpdateRunnable;
 import Communication.ConnectClientServer;
-import Communication.Connection;
-import Communication.QueueManager;
-import Controller.NSyncClient;
-import Controller.SendObject;
+import Communication.CommunicationManager;
 import Controller.UserProperties;
 
 import java.awt.EventQueue;
@@ -16,19 +13,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.rmi.RemoteException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.UIManager;
 
 public class ClientHelper {
-
-	public static Thread pollThread;
-	public static Thread pushThread;
 
 	public static void initializeClient() {
 		// create default directory where the program would store info
@@ -39,6 +29,8 @@ public class ClientHelper {
 
 		// start the tray icon
 		new TrayIconBasic();
+		
+		CommunicationManager.connectToServer();
 
 		// check if the user has successfully logged in before
 		Map<String, String> userParams = null;
@@ -53,9 +45,8 @@ public class ClientHelper {
 		} else {
 			setUserParams();
 			ConnectClientServer.processUpdateFromServer();
-			ConnectClientServer.processUpdateFromServer();
+			ClientUpdateRunnable.checkToSendQ();
 		}
-
 	}
 
 	private static void setUserParams() {
@@ -76,7 +67,7 @@ public class ClientHelper {
 	public static void performSync() {
 
 		// if the client can connect to a server do other things
-		if (Connection.isServerUp()) {
+		if (CommunicationManager.connectToServer()) {
 			// do something
 		} else {
 			TrayIconBasic
@@ -85,62 +76,6 @@ public class ClientHelper {
 							"Connection to server unavailable. All changes would be stored locally",
 							TrayIcon.MessageType.ERROR);
 		}
-	}
-
-	public static UserProperties performAuthentication() {
-		// check if this has been done before if not ask user for credentials
-
-		// if new user create container
-		return null;
-	}
-
-	public static int connectToServer(UserProperties u) {
-
-		return 0;
-	}
-
-	public static void syncFilesAtStartUp(UserProperties u) {
-		// run the file syncing in a thread
-
-		Thread initClient = new Thread(new Runnable() {
-			public void run() {
-				BlobManager.setContainerName(UserProperties.getUsername());
-				BlobManager.downloadAllBlobs();
-			}
-		});
-		initClient.start();
-	}
-
-	public static void continuallySyncFiles(UserProperties u) {
-		Thread initClient = new Thread(new Runnable() {
-			public void run() {
-				try {
-					Thread.sleep(600000);
-				} catch (InterruptedException ex) {
-					Logger.getLogger(ClientHelper.class.getName()).log(
-							Level.SEVERE, null, ex);
-				}
-				while (true) {
-					BlobManager.downloadAllBlobs();
-					try {
-						System.out.println("Continually sync thread started");
-						Thread.sleep(600000);
-					} catch (InterruptedException ex) {
-						Logger.getLogger(ClientHelper.class.getName()).log(
-								Level.SEVERE, null, ex);
-					}
-				}
-			}
-		});
-		initClient.start();
-		System.out.println("Continually sync thread started");
-	}
-
-	/* create a queue for the client. I still we should use a fixed queue */
-	private static String createQueue(String username) {
-		String queuename = username + new Date().getTime();
-		QueueManager.createQueue(queuename);
-		return queuename;
 	}
 
 	/*
@@ -166,20 +101,16 @@ public class ClientHelper {
 			}
 		}
 		reader.close();
-		if (dbParams.size() > 0)
-			return dbParams;
-		else
+		if (dbParams.size() > 0) {
+			System.out.println(dbParams.get("password"));
+			if (CommunicationManager.verifyUser(dbParams.get("username"),
+					dbParams.get("password"))) {
+				return dbParams;
+			} else {
+				return null;
+			}
+		} else
 			return null;
-	}
-
-	public static void main(String[] args) {
-		try {
-			Map<String, String> params = ClientHelper.loggedInBefore();
-			System.out.println(params.size());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	private static void startClientGUI() {
@@ -204,97 +135,27 @@ public class ClientHelper {
 		});
 	}
 
-	public static boolean loginUser(ClientGUI cg, String username,
-			String password) {
-		// call db method to login
-		// the line below is just for demo purposes
-		String queuename = null;
+	/*
+	 * public static void storeQueueNameAfterSignUp(String queuename) { try {
+	 * File file = new File(System.getProperty("user.dir") +
+	 * "/src/Settings/temp.txt");
+	 * 
+	 * // if file doesnt exists, then create it if (!file.exists()) {
+	 * file.createNewFile(); }
+	 * 
+	 * FileWriter fw = new FileWriter(file.getAbsoluteFile()); BufferedWriter bw
+	 * = new BufferedWriter(fw); bw.write(queuename); bw.close();
+	 * System.out.println("Done"); } catch (IOException e) {
+	 * e.printStackTrace(); } }
+	 * 
+	 * public static String retrieveQueueName() throws IOException {
+	 * BufferedReader reader = null; reader = new BufferedReader(new FileReader(
+	 * System.getProperty("user.dir") + "/src/Settings/temp.txt"));
+	 * 
+	 * String line = reader.readLine(); reader.close(); return line.trim(); }
+	 */
 
-		if (username.equals("democontainer")
-				&& password.equals("democontainer")) {
-
-			try {
-				// check if the user signed up first before logging in
-				queuename = retrieveQueueName();
-				File file = new File(System.getProperty("user.dir")
-						+ "/src/Settings/temp.txt");
-				if (file.exists()) {
-					file.delete();
-				}
-			} catch (IOException e) {
-				// e.printStackTrace();
-				// check if the user already has an account but logged in
-				// another client
-				queuename = createQueue(username);
-				UserProperties.setQueueName(queuename);
-			}
-
-			writeUserParamsToFile(username, password, queuename);
-			TrayIconBasic.displayMessage("Alert", "Login Successful",
-					TrayIcon.MessageType.INFO);
-			cg.dispose();
-			// delete the temp file
-			performSync();
-			return true;
-		}
-
-		cg.getMessage().setText("Login failed. Please try again");
-		return false;
-	}
-
-	public static boolean createAccount(ClientSignUpGUI jd, String username,
-			String password, String email) {
-		try {
-			// call database method to add account
-
-			// create a container for the user
-			BlobManager.createContainter(username);
-
-			// create a queue for the user using the username
-			String queuename = createQueue(username);
-			// if account creation is successful, tell the user and write to the
-			// settings file
-			jd.setMessage("Account successfully created");
-
-			storeQueueNameAfterSignUp(queuename);
-
-		} catch (Exception e) {
-			return false;
-		}
-		return true;
-	}
-
-	private static void storeQueueNameAfterSignUp(String queuename) {
-		try {
-			File file = new File(System.getProperty("user.dir")
-					+ "/src/Settings/temp.txt");
-
-			// if file doesnt exists, then create it
-			if (!file.exists()) {
-				file.createNewFile();
-			}
-
-			FileWriter fw = new FileWriter(file.getAbsoluteFile());
-			BufferedWriter bw = new BufferedWriter(fw);
-			bw.write(queuename);
-			bw.close();
-			System.out.println("Done");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private static String retrieveQueueName() throws IOException {
-		BufferedReader reader = null;
-		reader = new BufferedReader(new FileReader(
-				System.getProperty("user.dir") + "/src/Settings/temp.txt"));
-
-		String line = reader.readLine();
-		reader.close();
-		return line.trim();
-	}
-
-	private static void writeUserParamsToFile(String username, String password,
+	public static void writeUserParamsToFile(String username, String password,
 			String queuename) {
 		try {
 			String content = "username - " + username + "\n" + "password - "

@@ -1,6 +1,6 @@
 package Communication;
 
-import Communication.Connection;
+import Communication.CommunicationManager;
 
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.StorageException;
@@ -32,7 +32,7 @@ public class BlobManager {
 	// add the username to this string instead of default
 
 	private static String containerName = UserProperties.getUsername().trim();
-	private static String url = Connection.getURL() + containerName + "/";
+	private static String url = CommunicationManager.getURL() + containerName + "/";
 
 	// remember to set container name back to user if you have to change it for
 	// any reason
@@ -44,7 +44,7 @@ public class BlobManager {
 		containerName = containerName.toLowerCase();
 		try {
 			CloudStorageAccount storageAccount = CloudStorageAccount
-					.parse(Connection.getStorageConnectionString());
+					.parse(CommunicationManager.getStorageConnectionString());
 			CloudBlobClient blobClient = storageAccount.createCloudBlobClient();
 			CloudBlobContainer container = blobClient
 					.getContainerReference(containerName);
@@ -61,7 +61,7 @@ public class BlobManager {
 		FileInputStream fis = null;
 		try {
 			CloudStorageAccount storageAccount = CloudStorageAccount
-					.parse(Connection.getStorageConnectionString());
+					.parse(CommunicationManager.getStorageConnectionString());
 			CloudBlobClient blobClient = storageAccount.createCloudBlobClient();
 			CloudBlobContainer container = blobClient
 					.getContainerReference(containerName);
@@ -128,7 +128,7 @@ public class BlobManager {
 		ArrayList<String> list = new ArrayList<String>();
 		try {
 			CloudStorageAccount storageAccount = CloudStorageAccount
-					.parse(Connection.getStorageConnectionString());
+					.parse(CommunicationManager.getStorageConnectionString());
 			CloudBlobClient blobClient = storageAccount.createCloudBlobClient();
 			CloudBlobContainer container = blobClient
 					.getContainerReference(containerName);
@@ -151,13 +151,13 @@ public class BlobManager {
 	}
 
 	public synchronized static void downloadAllBlobs() {
-		Connection.watchFolder = false;
+		CommunicationManager.watchFolder = false;
 		String filePath = UserProperties.getDirectory();
 		System.out.println("The conn string is  " + filePath);
 		FileOutputStream fos = null;
 		try {
 			CloudStorageAccount storageAccount = CloudStorageAccount
-					.parse(Connection.getStorageConnectionString());
+					.parse(CommunicationManager.getStorageConnectionString());
 			CloudBlobClient blobClient = storageAccount.createCloudBlobClient();
 			CloudBlobContainer container = blobClient
 					.getContainerReference(containerName);
@@ -233,14 +233,14 @@ public class BlobManager {
 				}
 			}
 		}
-		Connection.watchFolder = true;
+		CommunicationManager.watchFolder = true;
 	}
 
 	public static void downloadBlob(String blobUri) {
 		String filePath = UserProperties.getDirectory();
 		try {
 			CloudStorageAccount storageAccount = CloudStorageAccount
-					.parse(Connection.getStorageConnectionString());
+					.parse(CommunicationManager.getStorageConnectionString());
 			CloudBlobClient blobClient = storageAccount.createCloudBlobClient();
 			CloudBlobContainer container = blobClient
 					.getContainerReference(containerName);
@@ -268,7 +268,7 @@ public class BlobManager {
 		System.out.println("Blob is " + blobName);
 		try {
 			CloudStorageAccount storageAccount = CloudStorageAccount
-					.parse(Connection.getStorageConnectionString());
+					.parse(CommunicationManager.getStorageConnectionString());
 			CloudBlobClient blobClient = storageAccount.createCloudBlobClient();
 			CloudBlobContainer container = blobClient
 					.getContainerReference(containerName);
@@ -291,7 +291,7 @@ public class BlobManager {
 	public synchronized static void deleteBlobContainer() {
 		try {
 			CloudStorageAccount storageAccount = CloudStorageAccount
-					.parse(Connection.getStorageConnectionString());
+					.parse(CommunicationManager.getStorageConnectionString());
 
 			CloudBlobClient blobClient = storageAccount.createCloudBlobClient();
 			CloudBlobContainer container = blobClient
@@ -324,7 +324,7 @@ public class BlobManager {
 		System.out.println("The new name is " + newName);
 		try {
 			CloudStorageAccount storageAccount = CloudStorageAccount
-					.parse(Connection.getStorageConnectionString());
+					.parse(CommunicationManager.getStorageConnectionString());
 			CloudBlobClient blobClient = storageAccount.createCloudBlobClient();
 			CloudBlobContainer container = blobClient
 					.getContainerReference(containerName);
@@ -362,7 +362,7 @@ public class BlobManager {
 		System.out.println("The new name is " + newName);
 		try {
 			CloudStorageAccount storageAccount = CloudStorageAccount
-					.parse(Connection.getStorageConnectionString());
+					.parse(CommunicationManager.getStorageConnectionString());
 			CloudBlobClient blobClient = storageAccount.createCloudBlobClient();
 			CloudBlobContainer container = blobClient
 					.getContainerReference(containerName);
@@ -391,7 +391,7 @@ public class BlobManager {
 
 	public static void main(String[] args) {
 
-		System.out.println(Connection.serverId);
+		System.out.println(CommunicationManager.serverId);
 
 		// BlobManager.uploadFileAsBlob("C:\\Users\\welcome\\NSync\\ti34\\group5.txt");
 

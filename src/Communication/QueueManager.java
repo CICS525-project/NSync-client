@@ -11,7 +11,7 @@ import com.microsoft.azure.storage.*;
 import com.microsoft.azure.storage.queue.*;
 
 public class QueueManager {
-	public static final String storageConnectionString = Connection
+	public static final String storageConnectionString = CommunicationManager
 			.getStorageConnectionString();	
 
 	public static void createQueue(String queueName) {
