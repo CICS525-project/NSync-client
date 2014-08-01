@@ -134,9 +134,7 @@ public class ClientSignUpGUI extends JDialog {
 						System.out.println(username + " " + password + " "
 								+ email);
 						if (!username.equals("") && !password.equals("")
-								&& isValidEmailAddress(email)) {
-							System.out.println(CommunicationManager.createAccount(getThis(),
-									username, password, email));
+								&& isValidEmailAddress(email)) {							
 							if (CommunicationManager.createAccount(getThis(),
 									username, password, email)) {
 								getMessage().setText(

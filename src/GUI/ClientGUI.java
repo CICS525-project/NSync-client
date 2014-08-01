@@ -73,7 +73,7 @@ public class ClientGUI extends JFrame {
 		top.setLayout(new MigLayout("", "[grow,fill][][fill][][][][][][][][][][][grow,fill]", "[][96.00][]"));
 		top.add(logo, "cell 2 1 11 1,alignx center,aligny center");
 		
-		message = new JLabel("Username: democontainer. Password: democontainer");
+		message = new JLabel("Use the sign up button to create an account");
 		message.setHorizontalAlignment(SwingConstants.CENTER);
 		top.add(message, "cell 0 2 13 1,alignx center,aligny center");
 
