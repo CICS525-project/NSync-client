@@ -6,6 +6,8 @@ import java.awt.Window.Type;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -13,10 +15,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import Communication.CommunicationManager;
+
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
+
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.Toolkit;
@@ -33,11 +38,11 @@ public class ClientSignUpGUI extends JDialog {
 	public JLabel getMessage() {
 		return message;
 	}
-	
+
 	public void setMessage(String message) {
 		getMessage().setText(message);
-	}	
-	
+	}
+
 	public ClientSignUpGUI getThis() {
 		return this;
 	}
@@ -46,7 +51,8 @@ public class ClientSignUpGUI extends JDialog {
 	 * Create the dialog.
 	 */
 	public ClientSignUpGUI() {
-		setIconImage(Toolkit.getDefaultToolkit().getImage(ClientSignUpGUI.class.getResource("/Images/fb.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(
+				ClientSignUpGUI.class.getResource("/Images/fb.png")));
 		getContentPane().setFont(new Font("SansSerif", Font.PLAIN, 14));
 		setTitle("Create Account");
 		setType(Type.POPUP);
@@ -56,27 +62,26 @@ public class ClientSignUpGUI extends JDialog {
 		contentPanel.setBackground(new Color(248, 248, 255));
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		contentPanel.setLayout(new FormLayout(new ColumnSpec[] {
-				FormFactory.RELATED_GAP_COLSPEC,
-				FormFactory.DEFAULT_COLSPEC,
-				FormFactory.RELATED_GAP_COLSPEC,
-				FormFactory.DEFAULT_COLSPEC,
-				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("default:grow"),
-				FormFactory.RELATED_GAP_COLSPEC,
-				FormFactory.DEFAULT_COLSPEC,},
-			new RowSpec[] {
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(23dlu;default)"),
-				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(23dlu;default)"),
-				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(23dlu;default)"),}));
+		contentPanel.setLayout(new FormLayout(
+				new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC,
+						FormFactory.DEFAULT_COLSPEC,
+						FormFactory.RELATED_GAP_COLSPEC,
+						FormFactory.DEFAULT_COLSPEC,
+						FormFactory.RELATED_GAP_COLSPEC,
+						ColumnSpec.decode("default:grow"),
+						FormFactory.RELATED_GAP_COLSPEC,
+						FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
+						FormFactory.RELATED_GAP_ROWSPEC,
+						FormFactory.DEFAULT_ROWSPEC,
+						FormFactory.RELATED_GAP_ROWSPEC,
+						RowSpec.decode("max(23dlu;default)"),
+						FormFactory.RELATED_GAP_ROWSPEC,
+						RowSpec.decode("max(23dlu;default)"),
+						FormFactory.RELATED_GAP_ROWSPEC,
+						RowSpec.decode("max(23dlu;default)"), }));
 		{
 			message = new JLabel("");
-			contentPanel.add(message, "6, 2");
+			contentPanel.add(message, "4, 2, 3, 1, center, default");
 		}
 		{
 			JLabel lblUsername = new JLabel("Username");
@@ -109,6 +114,7 @@ public class ClientSignUpGUI extends JDialog {
 		}
 		{
 			emailField = new JTextField();
+			emailField.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			emailField.setName("email");
 			contentPanel.add(emailField, "6, 8, fill, fill");
 			emailField.setColumns(10);
@@ -125,8 +131,25 @@ public class ClientSignUpGUI extends JDialog {
 						String username = getUsername().getText();
 						String password = getPassword().getText();
 						String email = getEmailField().getText();
-						System.out.println(username + " " + password + " " + email);
-						ClientHelper.createAccount(getThis(), username, password, email);
+						System.out.println(username + " " + password + " "
+								+ email);
+						if (!username.equals("") && !password.equals("")
+								&& isValidEmailAddress(email)) {							
+							if (CommunicationManager.createAccount(getThis(),
+									username, password, email)) {
+								getMessage().setText(
+										"Account succesfully created");
+							} else {
+								getMessage()
+										.setText(
+												"Error creating account. Please try again");
+							}
+						} else {
+							getMessage().setText(
+									"Username cannot be empty. "
+											+ "Password cannot be empty. "
+											+ "Email has to be valid");
+						}
 					}
 				});
 				okButton.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -154,10 +177,23 @@ public class ClientSignUpGUI extends JDialog {
 	public JButton getOkButton() {
 		return okButton;
 	}
+
 	public JTextField getUsername() {
 		return textField;
 	}
+
 	public JTextField getPassword() {
 		return password;
+	}
+
+	private static boolean isValidEmailAddress(String email) {
+		boolean result = true;
+		try {
+			InternetAddress emailAddr = new InternetAddress(email);
+			emailAddr.validate();
+		} catch (AddressException ex) {
+			result = false;
+		}
+		return result;
 	}
 }

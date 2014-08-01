@@ -1,7 +1,15 @@
 package Communication;
 
 import Communication.NsyncServerInterface;
+import Controller.UserProperties;
+import GUI.ClientGUI;
+import GUI.ClientHelper;
+import GUI.ClientSignUpGUI;
+import GUI.TrayIconBasic;
 
+import java.awt.TrayIcon;
+import java.io.File;
+import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -13,7 +21,7 @@ import java.util.Random;
 
 import javax.rmi.ssl.SslRMIClientSocketFactory;
 
-public class Connection {
+public class CommunicationManager {
 
 	public static boolean watchFolder = true;
 
@@ -39,7 +47,6 @@ public class Connection {
 	}
 
 	public static Map<String, String> getServerConnectionParams(int serverId) {
-
 		Map<String, String> connParams = new HashMap<String, String>();
 		if (serverId == 1) {
 			String storageConnectionString = "DefaultEndpointsProtocol=http;"
@@ -55,27 +62,22 @@ public class Connection {
 			connParams.put("serverIP", "138.91.113.97");
 			connParams.put("url",
 					"https://portalvhdsh8ghz0s9b7mx9.blob.core.windows.net/");
-                        
 		}
 
 		if (serverId == 2) {
-			
-                        String storageConnectionString = "DefaultEndpointsProtocol=http;"
-					+ "AccountName=portalvhds27bmmb28df76b;"
-					+ "AccountKey=+/R+aDSrb9BDH+HuU2eciV2fP4l6C1timdwao5czZrLE2vML3lt0omtSJhsL4NNi7rmTDWEflNlYXaeh0k+IZw==";
-			String dbConnectionString = "jdbc:sqlserver://e55t52o9fy.database.windows.net:1433"
+			String storageConnectionString = "DefaultEndpointsProtocol=http;"
+					+ "AccountName=portalvhdsh8ghz0s9b7mx9;"
+					+ "AccountKey=ThVIUXcwpsYqcx08mtIhRf6+XxvEuimK35/M65X+XlkdVCQNl4ViUiB/+tz/nq+eeZAEZCNrmFVQwwN3QiykvA==";
+			String dbConnectionString = "jdbc:sqlserver://ah0sncq8yf.database.windows.net:1433"
 					+ ";"
 					+ "database=db_like"
 					+ ";"
-					+ "user=db2@e55t52o9fy" + ";" + "password=NSyncgroup5";
+					+ "user=MySQLAdmin@ah0sncq8yf" + ";" + "password=almeta%6y";
 			connParams.put("storageConnectionString", storageConnectionString);
 			connParams.put("dbConnectionString", dbConnectionString);
-			connParams.put("serverIP", "137.135.56.127");
+			connParams.put("serverIP", "138.91.113.97");
 			connParams.put("url",
-					"https://portalvhds27bmmb28df76b.blob.core.windows.net/");
-                        
-                        
-                        
+					"https://portalvhdsh8ghz0s9b7mx9.blob.core.windows.net/");
 		}
 
 		if (serverId == 3) {
@@ -112,7 +114,7 @@ public class Connection {
 		return connParams.get("url");
 	}
 
-	public static boolean isServerUp() {
+	public static boolean connectToServer() {
 		Map<String, String> connParams = getServerConnectionParams(serverId);
 		System.out.println(connParams.get("serverIP"));
 		System.setProperty("javax.net.ssl.keyStore",
@@ -172,8 +174,69 @@ public class Connection {
 		// return false;
 	}
 
-	public static void main(String[] args) {
-		Connection.isServerUp();
+	public static boolean createAccount(ClientSignUpGUI jd, String username,
+			String password, String email) {
+		try {
+			
+			//System.out.println(server.createAccount(username, password, email));
+			// call remote method to create account
+			if (server.createAccount(username, password, email)) {
+				//jd.setMessage("Account successfully created");
+				return true;
+			} else {
+				//jd.setMessage("Account creation failed");
+				return false;
+			}			
+		} catch (Exception e) {
+			return false;
+		}
+		
+	}
+
+	public static boolean loginUser(ClientGUI cg, String username,
+			String password) {
+		// call rmi method to login
+		try {
+			if (server.loginUser(username, password)) {
+				String queuename = null;
+				queuename = server.createQueue(username);
+				String hash = server.getGeneratedPassword(password);
+				ClientHelper.writeUserParamsToFile(username, hash,
+						queuename);
+				TrayIconBasic.displayMessage("Alert", "Login Successful",
+						TrayIcon.MessageType.INFO);
+				cg.dispose();
+				return true;
+			}
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		cg.getMessage().setText("Login failed. Please try again");
+		return false;
+	}
+
+	public static boolean verifyUser(String username, String password) {
+		// call db method to login
+		try {
+			if (server.verifyUser(username, password)) {
+				String queuename = null;
+				queuename = server.createQueue(username);
+				ClientHelper.writeUserParamsToFile(username, password, queuename);
+				TrayIconBasic.displayMessage("Alert", "Account Verified",
+						TrayIcon.MessageType.INFO);
+				return true;
+			}
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		TrayIconBasic.displayMessage("Error!!!", "Your account could not be verified. Please login again",
+				TrayIcon.MessageType.ERROR);
+		return false;
+		
 	}
 
 }

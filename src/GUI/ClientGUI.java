@@ -1,25 +1,37 @@
 package GUI;
 
 import java.awt.BorderLayout;
+
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
 import java.awt.SystemColor;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+
 import net.miginfocom.swing.MigLayout;
+
 import javax.swing.JLabel;
+
 import java.awt.Toolkit;
+
 import javax.swing.JTextField;
 import javax.swing.JButton;
+
 import java.awt.Font;
 import java.awt.Color;
+
 import javax.swing.border.CompoundBorder;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+
 import javax.swing.SwingConstants;
+
+import Communication.CommunicationManager;
 
 public class ClientGUI extends JFrame {
 
@@ -61,7 +73,7 @@ public class ClientGUI extends JFrame {
 		top.setLayout(new MigLayout("", "[grow,fill][][fill][][][][][][][][][][][grow,fill]", "[][96.00][]"));
 		top.add(logo, "cell 2 1 11 1,alignx center,aligny center");
 		
-		message = new JLabel("Username: democontainer. Password: democontainer");
+		message = new JLabel("Use the sign up button to create an account");
 		message.setHorizontalAlignment(SwingConstants.CENTER);
 		top.add(message, "cell 0 2 13 1,alignx center,aligny center");
 
@@ -94,7 +106,7 @@ public class ClientGUI extends JFrame {
 		JButton btnLogin = new JButton("Login");
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				ClientHelper.loginUser(getThis(), getUsername().getText(), getPassword().getText());
+				CommunicationManager.loginUser(getThis(), getUsername().getText(), getPassword().getText());
 			}
 		});
 		btnLogin.setFont(new Font("SansSerif", Font.PLAIN, 14));

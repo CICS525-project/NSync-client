@@ -27,6 +27,7 @@ public class DBSentQManager extends DBManagerLocal implements Runnable
 			try 
 			{
 				inObj = sentQ.take();
+				System.out.println("The inobj is " + inObj.getFilePath());
 				processQueue(inObj);
 			} 
 			catch (InterruptedException e) 

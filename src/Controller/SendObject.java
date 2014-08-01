@@ -27,7 +27,7 @@ public class SendObject implements Serializable {
     
     public SendObject() {
         enteredIntoDB = false;
-        this.setUserID(UserProperties.userID);
+        this.setUserID(UserProperties.getUsername());
     }
     
     public SendObject(String fileName,String filePath,EventType event, Date timeStamp, 
@@ -175,6 +175,10 @@ public class SendObject implements Serializable {
         } catch (Exception e){
             System.out.println("Exception during creating hash of the file (" + this.fileName + ")" + e.getMessage());
         }
+    }
+    
+    public void setHash(String hash) {
+    	this.hash = hash;
     }
     
     /*
