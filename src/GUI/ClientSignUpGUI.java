@@ -81,7 +81,7 @@ public class ClientSignUpGUI extends JDialog {
 						RowSpec.decode("max(23dlu;default)"), }));
 		{
 			message = new JLabel("");
-			contentPanel.add(message, "6, 2");
+			contentPanel.add(message, "4, 2, 3, 1, center, default");
 		}
 		{
 			JLabel lblUsername = new JLabel("Username");
@@ -114,6 +114,7 @@ public class ClientSignUpGUI extends JDialog {
 		}
 		{
 			emailField = new JTextField();
+			emailField.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			emailField.setName("email");
 			contentPanel.add(emailField, "6, 8, fill, fill");
 			emailField.setColumns(10);
@@ -134,9 +135,17 @@ public class ClientSignUpGUI extends JDialog {
 								+ email);
 						if (!username.equals("") && !password.equals("")
 								&& isValidEmailAddress(email)) {
-							CommunicationManager.createAccount(getThis(), username,
-									password, email);
-							getMessage().setText("Account succesfully created");
+							System.out.println(CommunicationManager.createAccount(getThis(),
+									username, password, email));
+							if (CommunicationManager.createAccount(getThis(),
+									username, password, email)) {
+								getMessage().setText(
+										"Account succesfully created");
+							} else {
+								getMessage()
+										.setText(
+												"Error creating account. Please try again");
+							}
 						} else {
 							getMessage().setText(
 									"Username cannot be empty. "

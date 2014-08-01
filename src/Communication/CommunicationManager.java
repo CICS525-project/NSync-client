@@ -177,12 +177,14 @@ public class CommunicationManager {
 	public static boolean createAccount(ClientSignUpGUI jd, String username,
 			String password, String email) {
 		try {
+			
+			//System.out.println(server.createAccount(username, password, email));
 			// call remote method to create account
 			if (server.createAccount(username, password, email)) {
-				jd.setMessage("Account successfully created");
+				//jd.setMessage("Account successfully created");
 				return true;
 			} else {
-				jd.setMessage("Account creation failed");
+				//jd.setMessage("Account creation failed");
 				return false;
 			}			
 		} catch (Exception e) {
