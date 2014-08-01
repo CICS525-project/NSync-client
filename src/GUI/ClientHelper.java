@@ -74,7 +74,7 @@ public class ClientHelper {
 		// if the client can connect to a server do other things
 		if (Connection.isServerUp()) {
 			// sync files
-			 syncFilesAtStartUp(null);
+			 //syncFilesAtStartUp(null);
 
 			// continuallySyncFiles(null);
 		} else {
