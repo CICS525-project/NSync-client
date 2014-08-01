@@ -52,11 +52,11 @@ public class CommunicationManager {
 			String storageConnectionString = "DefaultEndpointsProtocol=http;"
 					+ "AccountName=portalvhdsh8ghz0s9b7mx9;"
 					+ "AccountKey=ThVIUXcwpsYqcx08mtIhRf6+XxvEuimK35/M65X+XlkdVCQNl4ViUiB/+tz/nq+eeZAEZCNrmFVQwwN3QiykvA==";
-			String dbConnectionString = "jdbc:sqlserver://ah0sncq8yf.database.windows.net:1433"
+			String dbConnectionString = "jdbc:sqlserver://jvaakzlcvo.database.windows.net:1433"
 					+ ";"
 					+ "database=db_like"
 					+ ";"
-					+ "user=MySQLAdmin@ah0sncq8yf" + ";" + "password=almeta%6y";
+					+ "user=yanki@jvaakzlcvo" + ";" + "password=almeta%6y";
 			connParams.put("storageConnectionString", storageConnectionString);
 			connParams.put("dbConnectionString", dbConnectionString);
 			connParams.put("serverIP", "138.91.113.97");

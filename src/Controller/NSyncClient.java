@@ -3,7 +3,6 @@ package Controller;
 import GUI.ClientHelper;
 import DBManager.DBController;
 import FolderWatcher.FolderWatcher;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
