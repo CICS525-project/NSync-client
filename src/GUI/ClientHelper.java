@@ -1,6 +1,7 @@
 package GUI;
 
 import Communication.BlobManager;
+import Communication.ConnectClientServer;
 import Communication.Connection;
 import Communication.QueueManager;
 import Controller.NSyncClient;
@@ -50,14 +51,14 @@ public class ClientHelper {
 		if (userParams == null) {
 			startClientGUI();
 		} else {
-			performSync();
-			pollSendObject();
-			pushSendObject();
+			setUserParams();
+			ConnectClientServer.processUpdateFromServer();
+			ConnectClientServer.processUpdateFromServer();
 		}
 
 	}
 
-	public static void performSync() {
+	private static void setUserParams() {
 		Map<String, String> userParams = null;
 		try {
 			userParams = loggedInBefore();
@@ -70,13 +71,13 @@ public class ClientHelper {
 		UserProperties.setPassword(userParams.get("password"));
 
 		System.out.println(userParams.get("queuename"));
+	}
+
+	public static void performSync() {
 
 		// if the client can connect to a server do other things
 		if (Connection.isServerUp()) {
-			// sync files
-			 //syncFilesAtStartUp(null);
-
-			// continuallySyncFiles(null);
+			// do something
 		} else {
 			TrayIconBasic
 					.displayMessage(
@@ -315,162 +316,5 @@ public class ClientHelper {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public static void pollSendObject() {
-		// get the queue of the client
-		System.out.println("The name of the queue is "
-				+ UserProperties.getQueueName());
-		final String queue = UserProperties.getQueueName();
-		pollThread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				while (true) {
-					if (QueueManager.getQueueLength(queue) > 0) {
-						// call to DBManager method to resolve conflicts missing
-						String message = QueueManager.deque(queue);
-						System.out
-								.println("The message dequeued is " + message);
-						SendObject d = QueueManager
-								.convertStringToSendObject(message);
-						processMessageFromQueue(d);
-						// call to dbManager to update the SendObject missing
-					}
-
-					try {
-						Thread.sleep(60000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		});
-		// continually check to see if the queue has something in a thread
-		pollThread.start();
-	}
-
-	public static void processMessageFromQueue(SendObject s) {
-		if (s.getEvent().equals(SendObject.EventType.Create)
-				|| s.getEvent().equals(SendObject.EventType.Modify)) {
-			downloadFile(s.getFilePath() + "/" + s.getFileName());
-		}
-
-		if (s.getEvent().equals(SendObject.EventType.Delete)) {
-			deleteLocalFile(s.getFilePath() + "/" + s.getFileName());
-		}
-
-		if (s.getEvent().equals(SendObject.EventType.Rename)) {
-			renameLocalFile(s.getFilePath() + "/" + s.getFileName(),
-					s.getNewFileName());
-		}
-
-	}
-
-	private static void downloadFile(String filePath) {
-		BlobManager.downloadBlob(filePath);
-	}
-
-	private static void deleteLocalFile(String filePath) {
-		File f = new File(filePath);
-		if (f.exists()) {
-			f.delete();
-		}
-	}
-
-	private static void renameLocalFile(String filePath, String newName) {
-		String filename, path;
-		if (filePath.contains("\\")) {
-			filePath.replaceAll("\\", "/");
-		}
-
-		if (filePath.contains("/")) {
-			filename = filePath.substring(filePath.lastIndexOf("/"));
-			path = filePath.substring(0, filePath.lastIndexOf("/"));
-			File oldname = new File(UserProperties.getDirectory() + path
-					+ filename);
-			File newname = new File(UserProperties.getDirectory() + path
-					+ newName);
-			oldname.renameTo(newname);
-		} else {
-			filename = filePath;
-			File oldname = new File(UserProperties.getDirectory() + filename);
-			File newname = new File(UserProperties.getDirectory() + newName);
-			oldname.renameTo(newname);
-		}
-	}
-
-	public static void pushSendObject() {
-		// get the queue of the client
-		pushThread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				while (true) {
-
-					if (Connection.isServerUp()) {
-						System.out.println("Server is up");
-						SendObject s = null;
-						try {
-							s = NSyncClient.toSendQ.take();
-							System.out.println("Just took something from the queue"
-									+ QueueManager.convertSendObjectToString(s));
-							if (Connection.server.getPermission(UserProperties
-									.getUsername())) {
-								SendObject r = Connection.server
-										.processSendObject(s);
-								System.out
-										.println("R IS ENTEREDTED INTO THE DB"
-												+ r.isEnteredIntoDB());
-								if (r.isEnteredIntoDB()) {
-									String fullPath = UserProperties
-											.getDirectory()
-											+ r.getFilePath()
-											+ r.getFileName();
-									System.out.println("\nSend object is "
-											+ r.getEvent().toString() + " \n");
-									if (r.getEvent().equals(
-											SendObject.EventType.Create)
-											|| r.getEvent()
-													.equals(SendObject.EventType.Modify)) {
-										System.out
-												.println("\nCalling the upload blob on "
-														+ fullPath + " \n");
-										BlobManager.uploadFileAsBlob(fullPath);
-									} else if (r.getEvent().equals(
-											SendObject.EventType.Delete)) {
-										System.out
-												.println("\nCalling the blob delete on "
-														+ fullPath + " \n");
-										BlobManager.deleteBlob(fullPath);
-									} else if (r.getEvent().equals(
-											SendObject.EventType.Rename)) {
-										System.out
-												.println("\nCalling the blob rename on "
-														+ fullPath + " \n");
-										BlobManager.renameBlob(
-												r.getNewFileName(),
-												r.getFileName());
-									}
-									// Thread.sleep(4000);
-									NSyncClient.sentQ.put(r);
-								}
-							}
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						} catch (RemoteException e) {
-							NSyncClient.toSendQ.add(s);
-							e.printStackTrace();
-						}
-					} else {
-						TrayIconBasic
-								.displayMessage(
-										"Server Offline",
-										"The server is offline so all changes would be stored locally",
-										TrayIcon.MessageType.WARNING);
-					}
-				}
-			}
-		});
-		// continually check to see if the queue has something in a thread
-		pushThread.start();
 	}
 }
