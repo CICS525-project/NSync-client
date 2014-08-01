@@ -35,8 +35,8 @@ public class ClientUpdateRunnable {
 								if (r.isEnteredIntoDB()) {
 									String fullPath = UserProperties
 											.getDirectory()
-											+ r.getFilePath()
-											+ r.getFileName();
+											+ pathParser(r.getFilePath())
+											+ "/" + r.getFileName();
 									System.out.println("\nSend object is "
 											+ r.getEvent().toString() + " \n");
 									if (r.getEvent().equals(
@@ -84,6 +84,14 @@ public class ClientUpdateRunnable {
 		});
 		// continually check to see if the queue has something in a thread
 		pushThread.start();
+	}
+	
+	private static String pathParser(String path) {
+		if(path == null || path.equals("")) {
+			return "";
+		} else {
+			return path + "/";
+		}
 	}
 
 }
