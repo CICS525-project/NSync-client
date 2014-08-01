@@ -32,7 +32,8 @@ public class BlobManager {
 	// add the username to this string instead of default
 
 	private static String containerName = UserProperties.getUsername().trim();
-	private static String url = CommunicationManager.getURL() + containerName + "/";
+	private static String url = CommunicationManager.getURL() + containerName
+			+ "/";
 
 	// remember to set container name back to user if you have to change it for
 	// any reason

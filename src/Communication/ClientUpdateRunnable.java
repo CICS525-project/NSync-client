@@ -28,7 +28,7 @@ public class ClientUpdateRunnable {
 							if (CommunicationManager.server.getPermission(UserProperties
 									.getUsername())) {
 								SendObject r = CommunicationManager.server
-										.processSendObject(s);
+										.serverDBUpdate(s);
 								System.out
 										.println("R IS ENTEREDTED INTO THE DB"
 												+ r.isEnteredIntoDB());
