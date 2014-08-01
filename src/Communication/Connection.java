@@ -55,22 +55,27 @@ public class Connection {
 			connParams.put("serverIP", "138.91.113.97");
 			connParams.put("url",
 					"https://portalvhdsh8ghz0s9b7mx9.blob.core.windows.net/");
+                        
 		}
 
 		if (serverId == 2) {
-			String storageConnectionString = "DefaultEndpointsProtocol=http;"
-					+ "AccountName=portalvhdsh8ghz0s9b7mx9;"
-					+ "AccountKey=ThVIUXcwpsYqcx08mtIhRf6+XxvEuimK35/M65X+XlkdVCQNl4ViUiB/+tz/nq+eeZAEZCNrmFVQwwN3QiykvA==";
-			String dbConnectionString = "jdbc:sqlserver://ah0sncq8yf.database.windows.net:1433"
+			
+                        String storageConnectionString = "DefaultEndpointsProtocol=http;"
+					+ "AccountName=portalvhds27bmmb28df76b;"
+					+ "AccountKey=+/R+aDSrb9BDH+HuU2eciV2fP4l6C1timdwao5czZrLE2vML3lt0omtSJhsL4NNi7rmTDWEflNlYXaeh0k+IZw==";
+			String dbConnectionString = "jdbc:sqlserver://e55t52o9fy.database.windows.net:1433"
 					+ ";"
 					+ "database=db_like"
 					+ ";"
-					+ "user=MySQLAdmin@ah0sncq8yf" + ";" + "password=almeta%6y";
+					+ "user=db2@e55t52o9fy" + ";" + "password=NSyncgroup5";
 			connParams.put("storageConnectionString", storageConnectionString);
 			connParams.put("dbConnectionString", dbConnectionString);
-			connParams.put("serverIP", "138.91.113.97");
+			connParams.put("serverIP", "137.135.56.127");
 			connParams.put("url",
-					"https://portalvhdsh8ghz0s9b7mx9.blob.core.windows.net/");
+					"https://portalvhds27bmmb28df76b.blob.core.windows.net/");
+                        
+                        
+                        
 		}
 
 		if (serverId == 3) {
