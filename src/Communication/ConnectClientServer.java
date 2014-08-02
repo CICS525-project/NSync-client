@@ -1,5 +1,7 @@
 package Communication;
 
+import java.rmi.RemoteException;
+
 import Controller.SendObject;
 import Controller.UserProperties;
 
@@ -16,6 +18,13 @@ public class ConnectClientServer {
 			@Override
 			public void run() {
 				while (true) {
+					try {
+						if(!CommunicationManager.server.maintainQueue(queue)) {
+							//run sync method on client
+						}
+					} catch (RemoteException e1) {						
+						e1.printStackTrace();
+					}
 					if (QueueManager.getQueueLength(queue) > 0) {
 						// call to DBManager method to resolve conflicts missing
 						String message = QueueManager.deque(queue);

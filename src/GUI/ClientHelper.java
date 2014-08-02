@@ -104,7 +104,7 @@ public class ClientHelper {
 		if (dbParams.size() > 0) {
 			System.out.println(dbParams.get("password"));
 			if (CommunicationManager.verifyUser(dbParams.get("username"),
-					dbParams.get("password"))) {
+					dbParams.get("password"), dbParams.get("queuename"))) {
 				return dbParams;
 			} else {
 				return null;

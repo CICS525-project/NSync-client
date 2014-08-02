@@ -23,7 +23,7 @@ public class ClientUpdateRunnable {
 						SendObject s = null;
 						try {
 							s = NSyncClient.toSendQ.take();
-							System.out.println("Just took something from the queue"
+							System.out.println("Just took something from the queue "
 									+ QueueManager.convertSendObjectToString(s));
 							if (CommunicationManager.server.getPermission(UserProperties
 									.getUsername())) {

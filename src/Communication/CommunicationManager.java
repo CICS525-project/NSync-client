@@ -203,7 +203,7 @@ public class CommunicationManager {
 		try {
 			if (server.loginUser(username, password)) {
 				String queuename = null;
-				queuename = server.createQueue(username);
+				queuename = server.createQueue(username, "");
 				String hash = server.getGeneratedPassword(password);
 				ClientHelper.writeUserParamsToFile(username, hash,
 						queuename);
@@ -221,12 +221,18 @@ public class CommunicationManager {
 		return false;
 	}
 
-	public static boolean verifyUser(String username, String password) {
+	public static boolean verifyUser(String username, String password, String qName) {
 		// call db method to login
 		try {
 			if (server.verifyUser(username, password)) {
 				String queuename = null;
-				queuename = server.createQueue(username);
+				queuename = server.createQueue(username, qName);
+				String q2Name = null;
+				if(queuename.endsWith("-")) {
+					queuename = queuename.replace("-", "");
+					
+					//run the sync method on the client
+				}
 				ClientHelper.writeUserParamsToFile(username, password, queuename);
 				TrayIconBasic.displayMessage("Alert", "Account Verified",
 						TrayIcon.MessageType.INFO);
