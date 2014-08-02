@@ -27,7 +27,7 @@ public class CommunicationManager {
 
 	public static int serverPort = 9005;
 
-	public static int serverId = getRandomServer();
+	public static int serverId = 3;//getRandomServer();
 
 	public static NsyncServerInterface server;
 
@@ -86,8 +86,8 @@ public class CommunicationManager {
 
 		if (serverId == 3) {
 			String storageConnectionString = "DefaultEndpointsProtocol=http;"
-					+ "AccountName=portalvhdsh8ghz0s9b7mx9;"
-					+ "AccountKey=ThVIUXcwpsYqcx08mtIhRf6+XxvEuimK35/M65X+XlkdVCQNl4ViUiB/+tz/nq+eeZAEZCNrmFVQwwN3QiykvA==";
+					+ "AccountName=portalvhdsw81h4xbpp76b4;"
+					+ "AccountKey=lBxPw8kuFh2lpRHpaSi3/bV/maTE8WJ7KSVJxU0W8/JltYqsm8W+k9qA1Vz38tyiBYX3p0a56Mid/sV88gzFrQ==";
 			String dbConnectionString = "jdbc:sqlserver://ah0sncq8yf.database.windows.net:1433"
 					+ ";"
 					+ "database=db_like"
@@ -95,9 +95,9 @@ public class CommunicationManager {
 					+ "user=MySQLAdmin@ah0sncq8yf" + ";" + "password=almeta%6y";
 			connParams.put("storageConnectionString", storageConnectionString);
 			connParams.put("dbConnectionString", dbConnectionString);
-			connParams.put("serverIP", "138.91.113.97");
+			connParams.put("serverIP", "137.135.57.215");
 			connParams.put("url",
-					"https://portalvhdsh8ghz0s9b7mx9.blob.core.windows.net/");
+					"https://portalvhdsw81h4xbpp76b4.blob.core.windows.net/");
 		}
 		return connParams;
 	}
