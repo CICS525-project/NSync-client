@@ -43,6 +43,20 @@ public class SendObject implements Serializable {
         this.setUserID(UserProperties.userID);
     }
     
+    public SendObject(String fileID, String fileName,String filePath,EventType event, Date timeStamp, 
+            boolean isAFolder, String newFileName) {
+        this.ID = fileID;
+        this.fileName = fileName;
+        this.newFileName = newFileName;
+        this.filePath = filePath;
+        this.event = event;
+        this.timeStamp = timeStamp;
+        this.isAFolder = isAFolder;
+        this.enteredIntoDB = false;
+        this.setHash();
+        this.setUserID(UserProperties.userID);
+    }
+    
     /**
      * @return the newFileName
      */
