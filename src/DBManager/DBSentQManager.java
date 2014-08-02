@@ -2,6 +2,7 @@ package DBManager;
 
 import java.util.concurrent.BlockingQueue;
 
+import Controller.NSyncClient;
 import Controller.SendObject;
 
 
@@ -16,7 +17,7 @@ public class DBSentQManager extends DBManagerLocal implements Runnable
 	public DBSentQManager(BlockingQueue<SendObject> sent)
 	{
 		super();
-		sentQ = sent;
+		//sentQ = sent;
 	}
 
 	public void run() 
@@ -26,8 +27,8 @@ public class DBSentQManager extends DBManagerLocal implements Runnable
 		{
 			try 
 			{
-				inObj = sentQ.take();
-				System.out.println("The inobj is " + inObj.getFilePath());
+				
+				inObj = NSyncClient.sentQ.take();
 				processQueue(inObj);
 			} 
 			catch (InterruptedException e) 
@@ -40,17 +41,27 @@ public class DBSentQManager extends DBManagerLocal implements Runnable
 	public static void processQueue(SendObject obj) // process queue in events queue class
 	{
 		String file_id="";
+		String new_status="";
 		int success=-1;
 		String file_path = obj.getFilePath();
 		String file_name = obj.getFileName();
+		String event = obj.getEvent().toString();
 		java.sql.Timestamp last_local_update =  getTimeStamp(obj.getTimeStamp());
 
-		file_id = getrowID(file_path, file_name);
+		file_id = obj.getID();
+		
+		System.out.println("file id_________________________________" +file_id);
+		System.out.println("file_path_________________________________" +file_path);
+		System.out.println("file_name_________________________________" +file_name);
+		System.out.println("ROW ID is _________________________________" +file_id);
+		
+		new_status = setNewState(event, getCurrentState(file_id));
+		System.out.println("NEW STATUS _________________________________" +new_status);
+		
 		success = localModifyLastServerUpdate(file_id, last_local_update);
-		if(success == -1)
-		{
-			System.out.println("Modify Last Server update datbase failed");
-		}
+		
+		System.out.println("Last server and state updated time_stamp updated");
+		
 
 	}
 }
