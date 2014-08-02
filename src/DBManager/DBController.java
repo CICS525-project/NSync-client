@@ -1,10 +1,9 @@
 package DBManager;
 
-import java.util.Date;
 import java.util.concurrent.BlockingQueue;
 
+import Controller.NSyncClient;
 import Controller.SendObject;
-import Controller.SendObject.EventType;
 
 /**
  * @author yasminf
@@ -40,14 +39,14 @@ public class DBController implements Runnable
 	public void run() 
 	{
 		DBManagerLocal.startDatabase();
-		SendObject obj = new SendObject();
-		Date d = new Date();
-		obj.setFileName("a.txt");
-		obj.setTimeStamp(d);
-		System.out.println("Testing Find Conflict _______________________________________________" +DBManagerLocal.findConflict(obj));
 
+		//eqm = new DBEventsQManager(eventsQ, toSendQ);
+		//sqm = new DBSentQManager(sentQ);
+		
 		eqm = new DBEventsQManager(eventsQ, toSendQ);
 		sqm = new DBSentQManager(sentQ);
+
+		
 		new Thread(eqm).start();
 		new Thread(sqm).start();
 	}
