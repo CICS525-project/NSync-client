@@ -32,7 +32,7 @@ public class FolderWatcher implements Runnable  {
     private final Path dir = NSyncClient.dir;
     //private static BlockingQueue<SendObject> toSendQ = NSyncClient.toSendQ;
     private static BlockingQueue<SendObject> eventsQ = NSyncClient.eventsQ;
-
+    //private static BlockingQueue<SendObject> eventsQ = new LinkedBlockingQueue<SendObject>();
     public FolderWatcher() throws IOException {
         watcher = FileSystems.getDefault().newWatchService();
         this.keys = new HashMap<WatchKey, Path>();
@@ -156,7 +156,8 @@ public class FolderWatcher implements Runnable  {
                     /*This if statement gets rid of all the useless Modify events. Modify is useful just if it comes
                     as the first event of the series, and if it is on a file and not a folder.
                     */
-                    
+                    //System.out.println("***************" + directory.toString() + "\\" + fileNamePath.getFileName());
+                    //System.out.println(isADirectory(directory.toString() + "\\" + fileNamePath.getFileName()));
                     if((kind == ENTRY_MODIFY) && ((i > 0) || isADirectory(directory.toString() + "\\" + fileNamePath.getFileName()))) {
                         break;
                     }
@@ -214,14 +215,14 @@ public class FolderWatcher implements Runnable  {
     }
 
     private boolean isADirectory(String elementPath) {
-        Path elementPathInFormat = Paths.get(elementPath);
+        Path elementPathInFormat = Paths.get(elementPath.trim());
         return Files.isDirectory(elementPathInFormat, NOFOLLOW_LINKS);
 
     }
 
     public static void main(String[] args) {
         try {
-            new FolderWatcher();
+            new FolderWatcher().run();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
