@@ -128,7 +128,7 @@ public class ClientSignUpGUI extends JDialog {
 				okButton = new JButton("Create Account");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
-						String username = getUsername().getText();
+						String username = getUsername().getText().toLowerCase();
 						String password = getPassword().getText();
 						String email = getEmailField().getText();
 						System.out.println(username + " " + password + " "

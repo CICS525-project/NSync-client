@@ -89,7 +89,13 @@ public class QueueManager {
 			// Output the stack trace.
 			e.printStackTrace();
 		}
-		return retrievedMessage.toString();
+		try {
+			return retrievedMessage.getMessageContentAsString();
+		} catch (StorageException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "";
 	}
 
 	public static void deleteQueue(String queueName) {
@@ -188,16 +194,16 @@ public class QueueManager {
 			isAFolder = 1;
 		}
 
-		s = o.getFileName() + "|" + o.getNewFileName() + "|" + o.getFilePath()
-				+ "|" + o.getEvent().toString() + "|" + enteredInDB + "|"
-				+ o.getTimeStamp().toString() + "|" + isAFolder + "|"
-				+ o.getHash() + "|" + o.getID() + "|" + o.getUserID();
+		s = o.getFileName() + "___" + o.getNewFileName() + "___" + o.getFilePath()
+				+ "___" + o.getEvent().toString() + "___" + enteredInDB + "___"
+				+ o.getTimeStamp().toString() + "___" + isAFolder + "___"
+				+ o.getHash() + "___" + o.getID() + "___" + o.getUserID();
 		return s;
 	}
 
 	public static SendObject convertStringToSendObject(String s) {		
 		SendObject o = new SendObject();
-		String[] parts = s.split("|");
+		String[] parts = s.split("___");
 		o.setFileName(parts[0]);
 		o.setNewFileName(parts[1]);
 		o.setFilePath(parts[2]);
