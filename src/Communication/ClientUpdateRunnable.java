@@ -32,11 +32,11 @@ public class ClientUpdateRunnable {
 								System.out
 										.println("R IS ENTEREDTED INTO THE DB"
 												+ r.isEnteredIntoDB());
-								if (r.isEnteredIntoDB()) {
+							//	if (r.isEnteredIntoDB()) {
 									String fullPath = UserProperties
 											.getDirectory()
 											+ pathParser(r.getFilePath())
-											+ "/" + r.getFileName();
+											+ r.getFileName();
 									System.out.println("\nSend object is "
 											+ r.getEvent().toString() + " \n");
 									if (r.getEvent().equals(
@@ -64,7 +64,7 @@ public class ClientUpdateRunnable {
 									}
 									// Thread.sleep(4000);
 									NSyncClient.sentQ.put(r);
-								}
+								//}
 							}
 						} catch (InterruptedException e) {
 							e.printStackTrace();
