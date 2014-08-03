@@ -24,6 +24,7 @@ public class ConnectClientServer {
 					try {
 						if (!CommunicationManager.server.maintainQueue(queue)) {
 							// run sync method
+							
 						}
 					} catch (RemoteException e1) {
 						// could be because server is down or because the client

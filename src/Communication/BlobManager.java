@@ -284,7 +284,7 @@ public class BlobManager {
 					+ " and the new path is " + url + newName);
 			CloudBlob oldBlob = container.getBlockBlobReference(oldName);
 			CloudBlob newBlob = container.getBlockBlobReference(newName);
-			File f = null;
+			/*	File f = null;
 			if (!newBlob.exists()) {				
 				String path = System.getProperty("user.home") + "\\Desktop"
 						+ "\\p.txt";
@@ -294,10 +294,21 @@ public class BlobManager {
 					f.createNewFile();
 				}
 				newBlob.uploadFromFile(path);
-			}
-			newBlob.startCopyFromBlob(oldBlob);
-			oldBlob.delete();
-			f.delete();
+			} */
+			//newBlob.startCopyFromBlob(oldBlob);
+			//oldBlob.delete();
+			//f.delete();
+			
+			String path = System.getProperty("user.dir") + "/" + oldBlob.getName();
+            File f = new File(path);
+            if (!f.exists()) {
+                f.createNewFile();
+            }
+            oldBlob.downloadToFile(path);
+            newBlob.uploadFromFile(path);//.startCopyFromBlob(oldBlob);
+            oldBlob.delete();
+            f.delete();
+			
 		} catch (URISyntaxException | InvalidKeyException | StorageException
 				| IOException ex) {
 			Logger.getLogger(BlobManager.class.getName()).log(Level.SEVERE,
@@ -327,15 +338,28 @@ public class BlobManager {
 				CloudBlob newBlob = container.getBlockBlobReference(nName);
 				CloudBlob oldBlob = container.getBlockBlobReference(oName);
 				System.out.println("The blob names are " + blob.getName());
-				System.out.println("The copy status is " + blob.getCopyState());
-				newBlob.startCopyFromBlob(oldBlob);
-				oldBlob.delete();
+				//System.out.println("The copy status is " + blob.getCopyState());
+				//newBlob.startCopyFromBlob(oldBlob);
+				//oldBlob.delete();
+				String path = System.getProperty("user.dir") + "/" + oldBlob.getName();
+	            File f = new File(path);
+	            if (!f.exists()) {
+	                f.createNewFile();
+	            }
+	            oldBlob.downloadToFile(path);
+	            newBlob.uploadFromFile(path);//.startCopyFromBlob(oldBlob);
+	            oldBlob.delete();
+	            f.delete();
+				
 			}
 		} catch (URISyntaxException | InvalidKeyException | StorageException ex) {
 			Logger.getLogger(BlobManager.class.getName()).log(Level.SEVERE,
 					null, ex);
 			System.out.println("The message of the exception is "
 					+ ex.getMessage());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
