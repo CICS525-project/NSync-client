@@ -1,12 +1,3 @@
-/*C6*/SET SCHEMA PUBLIC
-CREATE TABLE IF NOT EXISTS files(file_id VARCHAR(200),                    file_path   VARCHAR(200),                     file_name   VARCHAR(200),                     file_hash   VARCHAR(200),                    last_local_update      TIMESTAMP,                    last_server_update     TIMESTAMP,                    user_id\u0009  VARCHAR(200),                    primary key(file_id)                  ) 
-/*C7*/SET SCHEMA PUBLIC
-INSERT INTO FILES VALUES('a4e8afff93b9fc64b0e13980c4236960','','total - Copy.txt','d75e81bcf07bfc5f0af9d8272f859304','2014-08-03 14:08:16.036000',NULL,'demo5')
-COMMIT
-DELETE FROM FILES WHERE FILE_ID='a4e8afff93b9fc64b0e13980c4236960'
-INSERT INTO FILES VALUES('a4e8afff93b9fc64b0e13980c4236960','','total - Copy.txt','d75e81bcf07bfc5f0af9d8272f859304','2014-08-03 14:08:16.036000','2014-08-03 14:08:16.036000','demo5')
-COMMIT
-/*C6*/DISCONNECT
-/*C7*/DELETE FROM FILES WHERE FILE_ID='a4e8afff93b9fc64b0e13980c4236960'
-INSERT INTO FILES VALUES('a4e8afff93b9fc64b0e13980c4236960','','typical.txt','d75e81bcf07bfc5f0af9d8272f859304','2014-08-03 14:08:16.036000','2014-08-03 14:08:16.036000','demo5')
-COMMIT
+/*C4*/SET SCHEMA PUBLIC
+CREATE TABLE IF NOT EXISTS files(file_id VARCHAR(200),                    file_path   VARCHAR(200),                     file_name   VARCHAR(200),                     file_hash   VARCHAR(200), \u0009\u0009\u0009\u0009\u0009  file_state   VARCHAR(200),                   last_local_update      TIMESTAMP,                    last_server_update     TIMESTAMP,                    user_id\u0009  VARCHAR(200),                    primary key(file_id)                  ) 
+DISCONNECT

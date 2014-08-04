@@ -49,18 +49,18 @@ public class ClientUpdateRunnable {
 										BlobManager.uploadFileAsBlob(fullPath);
 									} else if (r.getEvent().equals(
 											SendObject.EventType.Delete)) {
-										System.out
-												.println("\nCalling the blob delete on "
-														+ fullPath + " \n");
-										BlobManager.deleteBlob(fullPath);
+										//System.out
+										//		.println("\nCalling the blob delete on "
+										//				+ fullPath + " \n");
+										//BlobManager.deleteBlob(fullPath);
 									} else if (r.getEvent().equals(
 											SendObject.EventType.Rename)) {
 										System.out
 												.println("\nCalling the blob rename on "
 														+ fullPath + " \n");
-										BlobManager.renameBlob(
-												r.getNewFileName(),
-												r.getFileName());
+									//	BlobManager.renameBlob(
+									//			r.getNewFileName(),
+									//			r.getFileName());
 									}
 									// Thread.sleep(4000);
 									NSyncClient.sentQ.put(r);
