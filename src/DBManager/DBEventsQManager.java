@@ -43,11 +43,11 @@ public class DBEventsQManager extends DBManagerLocal implements Runnable{
 
 		public static SendObject processQueue(SendObject obj) // process queue in events queue class
 		{
+			
+			System.out.println("**DBMANAGER: EventQManager **********************************************************");
 			String file_id=obj.getID();
 			int success = -1;
-
 			String file_path = obj.getFilePath();
-			//System.out.println("The file path in DB Events now is ***************************************" + obj.getFilePath());
 			String file_name = obj.getFileName();
 			String file_hash = obj.getHash();
 			java.sql.Timestamp last_local_update =  getTimeStamp(obj.getTimeStamp());
@@ -60,6 +60,8 @@ public class DBEventsQManager extends DBManagerLocal implements Runnable{
 	
 				if(event == EventType.Create && !(obj.isIsAFolder()))
 				{
+					if(!isFileInDB(file_path, file_name))
+					{
 					try
 					{
 						file_id = generateHashID(file_name, file_path, userID, last_local_update);
@@ -77,6 +79,12 @@ public class DBEventsQManager extends DBManagerLocal implements Runnable{
 						obj.setID(file_id);
 						System.out.println("Inserting file local-----------------------------------------------------"+file_id);
 					}
+					}
+					//else 
+					//{
+						//ignore event false event from from blob
+					//}
+				
 				}
 				else if(event == EventType.Modify && !(obj.isIsAFolder()))
 				{
