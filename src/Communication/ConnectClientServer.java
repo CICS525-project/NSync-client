@@ -7,6 +7,7 @@ import java.rmi.RemoteException;
 
 import Controller.SendObject;
 import Controller.UserProperties;
+import DBManager.DBManagerLocal;
 
 public class ConnectClientServer {
 
@@ -50,12 +51,26 @@ public class ConnectClientServer {
 					}
 					if (QueueManager.getQueueLength(queue) > 0) {
 						// call to DBManager method to resolve conflicts missing
+						
+						
+						
 						String message = QueueManager.deque(queue);
 						System.out
 								.println("The message dequeued is " + message);
 						SendObject d = QueueManager
 								.convertStringToSendObject(message);
-						processMessageFromQueue(d);
+						
+						if(DBManagerLocal.findConflict(d)) {
+							try {
+								LocalFileManager.copyConflictedFile(d, d.getUserID() + "_conflict_" + d.getFileName());
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							BlobManager.downloadBlob(d.getFilePath() + "/" + d.getFileName());
+						} else {						
+							processMessageFromQueue(d);
+						}
 						// call to dbManager to update the SendObject missing
 					}
 

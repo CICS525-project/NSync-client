@@ -115,8 +115,8 @@ public class BlobManager {
 					.of(BlobListingDetails.METADATA);
 			for (ListBlobItem blobItem : container.listBlobs(startsWith, true,
 					details, null, null)) {
-				System.out.println(blobItem.getUri().toString()
-						.substring(url.length() - 1));
+			//	System.out.println(blobItem.getUri().toString()
+			//			.substring(url.length() - 1));
 				//CloudBlob b = (CloudBlob) blobItem;
 				// b.acquireLease(60, "dddddddddddddddddddddddddddddddd");
 				list.add(blobItem.getUri().toString().substring(url.length()));
@@ -198,11 +198,11 @@ public class BlobManager {
 					.getContainerReference(containerName);
 			CloudBlob blob = container.getBlockBlobReference(blobUri);
 			blob.downloadAttributes();
-			File yourFile = new File(filePath + blob.getName());
+			File yourFile = new File(filePath +  blob.getName());
 			if (!yourFile.exists()) {
 				yourFile.getParentFile().mkdirs();
 			}
-			FileOutputStream fos = new FileOutputStream(blob.getName());
+			FileOutputStream fos = new FileOutputStream(filePath + blob.getName());
 			blob.download(fos);
 			fos.close();
 		} catch (URISyntaxException | InvalidKeyException | StorageException
@@ -299,7 +299,7 @@ public class BlobManager {
 			//oldBlob.delete();
 			//f.delete();
 			
-			String path = System.getProperty("user.dir") + "/" + oldBlob.getName();
+			String path = System.getProperty("user.dir").replaceAll("\\", "/") + "/" + oldBlob.getName();
             File f = new File(path);
             if (!f.exists()) {
                 f.createNewFile();
@@ -341,7 +341,7 @@ public class BlobManager {
 				//System.out.println("The copy status is " + blob.getCopyState());
 				//newBlob.startCopyFromBlob(oldBlob);
 				//oldBlob.delete();
-				String path = System.getProperty("user.dir") + "/" + oldBlob.getName();
+				String path = System.getProperty("user.dir").replaceAll("\\", "/") + "/" + oldBlob.getName();
 	            File f = new File(path);
 	            if (!f.exists()) {
 	                f.createNewFile();

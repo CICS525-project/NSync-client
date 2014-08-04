@@ -134,7 +134,7 @@ public class ClientSignUpGUI extends JDialog {
 						System.out.println(username + " " + password + " "
 								+ email);
 						if (!username.equals("") && !password.equals("")
-								&& isValidEmailAddress(email)) {							
+								&& isValidEmailAddress(email) && !username.matches(".*\\d.*"))  {							
 							if (CommunicationManager.createAccount(getThis(),
 									username, password, email)) {
 								getMessage().setText(
@@ -142,11 +142,11 @@ public class ClientSignUpGUI extends JDialog {
 							} else {
 								getMessage()
 										.setText(
-												"Error creating account. Please try again");
+												"Error creating account. Please try again \n Username or email already used");
 							}
 						} else {
 							getMessage().setText(
-									"Username cannot be empty. "
+									"Username cannot be empty or cannot contain digits.\n "
 											+ "Password cannot be empty. "
 											+ "Email has to be valid");
 						}
