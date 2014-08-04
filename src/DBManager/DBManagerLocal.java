@@ -205,7 +205,7 @@ public class DBManagerLocal {
 
 		try {
 			PreparedStatement ps = con
-					.prepareStatement("SELECT * FROM files WHERE last_local_update > last_server_update OR file_state = 'DELETE'");
+					.prepareStatement("SELECT * FROM files WHERE last_local_update > last_server_update OR file_state = 'DELETE' OR file_state = 'RENAME'");
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				file_id = rs.getString(1);
