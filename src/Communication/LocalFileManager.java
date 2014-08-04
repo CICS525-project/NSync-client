@@ -15,6 +15,7 @@ public class LocalFileManager {
 	public static void download(SendObject s) {
 		String filePath = UserProperties.getDirectory()
 				+ pathParser(s.getFilePath()) + s.getFileName();
+		System.out.println("File to be downloaded is " + pathParser(s.getFilePath()) + s.getFileName());
 		BlobManager.downloadBlob(filePath);
 	}
 

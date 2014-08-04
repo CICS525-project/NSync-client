@@ -210,6 +210,21 @@ public class CommunicationManager {
 				TrayIconBasic.displayMessage("Alert", "Login Successful",
 						TrayIcon.MessageType.INFO);
 				cg.dispose();
+				
+				//create the folder for the user
+				// create default directory where the program would store info
+				File dir = new File(UserProperties.getDirectory());
+				
+				if (!dir.exists()) {
+					dir.mkdir();
+				} else {
+					dir.delete();
+					dir.mkdir();
+				}
+				
+				TrayIconBasic.displayMessage("Alert", "Your watched directory is at " + UserProperties.getDirectory(),
+						TrayIcon.MessageType.INFO);
+				
 				return true;
 			}
 		} catch (RemoteException e) {

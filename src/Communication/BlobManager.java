@@ -188,8 +188,10 @@ public class BlobManager {
 		// CommunicationManager.watchFolder = true;
 	}
 
-	public static void downloadBlob(String blobUri) {
+	public static void downloadBlob(String fullPath) {
 		String filePath = UserProperties.getDirectory();
+		String blobUri = fullPath.substring(filePath.length());
+		System.out.println("The blob uri is " + blobUri);
 		try {
 			CloudStorageAccount storageAccount = CloudStorageAccount
 					.parse(CommunicationManager.getStorageConnectionString());

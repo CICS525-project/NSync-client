@@ -21,11 +21,7 @@ import javax.swing.UIManager;
 public class ClientHelper {
 
 	public static void initializeClient() {
-		// create default directory where the program would store info
-		File dir = new File(UserProperties.getDirectory());
-		if (!dir.exists()) {
-			dir.mkdir();
-		}
+		
 
 		// start the tray icon
 		new TrayIconBasic();
