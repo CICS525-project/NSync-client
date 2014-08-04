@@ -32,8 +32,8 @@ public class FolderWatcher implements Runnable {
     private final Map<WatchKey, Path> keys;
     private final Path dir = NSyncClient.dir;
     //private static BlockingQueue<SendObject> toSendQ = NSyncClient.toSendQ;
-    //private static BlockingQueue<SendObject> eventsQ = NSyncClient.eventsQ;
-    private static BlockingQueue<SendObject> eventsQ = new LinkedBlockingQueue<SendObject>();
+    private static BlockingQueue<SendObject> eventsQ = NSyncClient.eventsQ;
+    //private static BlockingQueue<SendObject> eventsQ = new LinkedBlockingQueue<SendObject>();
 
     public FolderWatcher() throws IOException {
         watcher = FileSystems.getDefault().newWatchService();
@@ -89,7 +89,7 @@ public class FolderWatcher implements Runnable {
             List<WatchEvent<?>> oneElementsEvents = key.pollEvents();
 
             //checking if the event is a rename
-            /*if (isRename(oneElementsEvents)) {
+            if (isRename(oneElementsEvents)) {
                 WatchEvent<?> event0 = oneElementsEvents.get(0);
                 WatchEvent<Path> ev0 = (WatchEvent<Path>) event0;
                 Path fileNamePath0 = ev0.context();
@@ -120,7 +120,7 @@ public class FolderWatcher implements Runnable {
 
                 eventsQ.add(sendObject);
                 System.out.println("\033[34mSENDOBJECT(Rename) CREATED AND ADDED TO THE QUEUE\n");
-            } else {*/
+            } else {
 
                 for (WatchEvent<?> event : oneElementsEvents) {
                     //getting the event kind
@@ -187,10 +187,10 @@ public class FolderWatcher implements Runnable {
 
                     eventsQ.add(sendObject);
                     System.out.println("\033[34mSENDOBJECT(" + kind.name() + ") CREATED AND ADDED TO THE QUEUE\n");
-                    //increasing i
+                    //increasing count
                     count++;
                 }
-            //}
+            }
 
             boolean valid = key.reset();
             if (!valid) {
