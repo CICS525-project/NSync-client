@@ -43,7 +43,7 @@ public class DBEventsQManager extends DBManagerLocal implements Runnable{
 
 		public static SendObject processQueue(SendObject obj) // process queue in events queue class
 		{
-			String file_id="";
+			String file_id=obj.getID();
 			int success = -1;
 
 			String file_path = obj.getFilePath();
@@ -56,9 +56,9 @@ public class DBEventsQManager extends DBManagerLocal implements Runnable{
 			EventType event = obj.getEvent();
 			String string_event = obj.getEvent().toString();
 			String new_state = "";
-			if(!obj.isIsAFolder())
-			{		
-				if(event == EventType.Create)
+		
+	
+				if(event == EventType.Create && !(obj.isIsAFolder()))
 				{
 					try
 					{
@@ -68,16 +68,17 @@ public class DBEventsQManager extends DBManagerLocal implements Runnable{
 					{
 						e.printStackTrace();
 					}
-					System.out.println("Inserting file -----------------------------------------------------");
+				
 					success = localinsert(file_id, file_path, file_name, file_hash, string_event, userID, last_local_update) ;
 					if(success!=-1)
 					{
 
-						System.out.println("Inserting file -----------------------------------------------------"+file_id);
+						
 						obj.setID(file_id);
+						System.out.println("Inserting file local-----------------------------------------------------"+file_id);
 					}
 				}
-				else if(event == EventType.Modify)
+				else if(event == EventType.Modify && !(obj.isIsAFolder()))
 				{
 
 					file_id = getrowID(file_path, file_name);
@@ -86,7 +87,7 @@ public class DBEventsQManager extends DBManagerLocal implements Runnable{
 					{
 						if(fileHashChanged(file_id, file_hash))
 						{
-							System.out.println("Modifying file -----------------------------------------------------");
+							System.out.println("Modifying file local -----------------------------------------------------"+file_id);
 							success = localModify(file_id, file_hash, new_state, last_local_update);
 
 						}
@@ -115,31 +116,22 @@ public class DBEventsQManager extends DBManagerLocal implements Runnable{
 						//				}
 					}*/
 
-					System.out.println("Renaming file -----------------------------------------------------");
+					System.out.println("Renaming file local-----------------------------------------------------"+file_id);
 					success = localRename(file_id, file_name, new_file_name, file_path, new_state, last_local_update, false);
 					
 
 				}
-				else if(event == EventType.Delete)
+				else if(event == EventType.Delete && !(obj.isIsAFolder()))
 				{
 					file_id = getrowID(file_path, file_name);
-					System.out.println("Deleting file -----------------------------------------------------");
+					System.out.println("Deleting file -----------------------------------------------------"+file_id);
 					success = localDelete(file_id);	
 				}
 
 
 				obj.setEnteredIntoDB(true);
 				obj.setID(file_id);
-				System.out.println("Inserting file id is-----------------------------------------------------"+file_id);
 				return obj;
-			}
-
-			else 
-			{
-				//is a folder do nothing. 
-				System.out.println("OBJECT IS A FOLDER DB MANAGER NOT INSERTING __________________________________________________________");
-				return null;
-			}
 		}
 	}
 

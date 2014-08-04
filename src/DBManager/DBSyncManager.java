@@ -7,10 +7,11 @@ import java.util.concurrent.BlockingQueue;
 import Controller.NSyncClient;
 import Controller.SendObject;
 import Controller.SendObject.EventType;
-
+import Controller.SendObject;
 public class DBSyncManager extends DBManagerLocal{
 
 	private static BlockingQueue<SendObject> sentQ;
+	
 
 	public DBSyncManager()
 	{
@@ -31,17 +32,19 @@ public class DBSyncManager extends DBManagerLocal{
 				String file_hash = rs.getString("file_hash");
 				String file_state = rs.getString("file_state");
 				java.sql.Timestamp last_local= rs.getTimestamp("last_local_update");
+				Date date = new Date(last_local.getTime());
+				
 				java.sql.Timestamp last_server= rs.getTimestamp("last_server_update");
 				String user_id = rs.getString("user_id");
 				System.out.println(file_id + "\t" + file_path +
 						"\t" + file_name + "\t" + file_hash +
 						"\t" + file_state + "\t" + last_local + "\t" + last_server + "\t" + user_id);
-				//sobj = new SendObject(file_id, file_name, file_path, file_state, last_local, null, "");
-				//need to fix Send Object constructor need method that will convert enum to string.
-				if(sobj!=null)
-				{
-					NSyncClient.toSendQ.put(sobj);
-				}
+				 sobj = new SendObject(file_id, file_name, file_path, toEvent(file_state), date, false, "");
+                 System.out.println("The object id in the SYNC CLASS &&&&&&&&&&&&&&&---------------------------------"+sobj.getID());
+				//if(sobj!=null)
+				//{
+					//NSyncClient.toSendQ.put(sobj);
+				//}
 			}
 		} catch (Exception e ) {
 			e.printStackTrace(System.out);
@@ -136,5 +139,28 @@ public class DBSyncManager extends DBManagerLocal{
 
 
 	}
+
+	public static EventType toEvent(String str_event)
+	{
+		EventType ev = null;
+		if(str_event.equalsIgnoreCase("Create"))
+		{
+			ev = EventType.Create;
+		}
+		else if (str_event.equalsIgnoreCase("Modify"))
+		{
+			ev = EventType.Modify;
+		}
+		else if (str_event.equalsIgnoreCase("Rename"))
+		{
+			ev = EventType.Rename;
+		}
+		else if (str_event.equalsIgnoreCase("Delete"))
+		{
+			ev = EventType.Delete;
+		}
+		return ev;
+	}
+
 
 }

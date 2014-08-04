@@ -40,11 +40,12 @@ public class DBController implements Runnable
 	public void run() 
 	{
 		DBManagerLocal.startDatabase();
-		SendObject obj = new SendObject();
+		DBSyncManager.DBClientToServerList();
+		/*SendObject obj = new SendObject();
 		Date d = new Date();
 		obj.setFileName("a.txt");
 		obj.setTimeStamp(d);
-		System.out.println("Testing Find Conflict _______________________________________________" +DBManagerLocal.findConflict(obj));
+		System.out.println("Testing Find Conflict _______________________________________________" +DBManagerLocal.findConflict(obj));*/
 
 		eqm = new DBEventsQManager(eventsQ, toSendQ);
 		sqm = new DBSentQManager(sentQ);
