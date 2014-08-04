@@ -395,34 +395,63 @@ public class DBManagerLocal {
 	
 	public static int localModifyLastServerUpdate(String file_id, java.sql.Timestamp last_server_update) {
 		int result = -1;
-		String state = "";
+		String current_state = "";
 				Connection con = getConnection();
 		if (isIDInDB(file_id)) {
-			try {
-				PreparedStatement ps = con.prepareStatement("UPDATE files SET last_server_update = ?, file_state = ? WHERE file_id = ?");
-				ps.setTimestamp(1, last_server_update);
-				ps.setString(2, "");
-				ps.setString(3, file_id);
-				result = ps.executeUpdate();
-			} catch (Exception e) {
-				e.printStackTrace();
-				result = -1;
+			current_state = getCurrentState(file_id);
+			if(!current_state.equalsIgnoreCase("DELETE"))
+			{
+				try {
+					PreparedStatement ps = con.prepareStatement("UPDATE files SET last_server_update = ?, file_state = ? WHERE file_id = ?");
+					ps.setTimestamp(1, last_server_update);
+					ps.setString(2, "");
+					ps.setString(3, file_id);
+					result = ps.executeUpdate();
+				} catch (Exception e) {
+					e.printStackTrace();
+					result = -1;
+				}
+			}
+			else //if it is a delete event remove from db when you receive last update from server
+			{
+				try {
+					PreparedStatement ps = con.prepareStatement("DELETE FROM files WHERE file_id = ?");
+					ps.setString(1, file_id);
+					result = ps.executeUpdate();
+				} catch (Exception e) {
+					e.printStackTrace();
+					result = -1;
+				}
 			}
 		}
-		
 		return result;
-		
-	}
+		}
+
 
 	public static int localDelete(String file_id) {
 		int result = -1;
 
 		Connection con = getConnection();
 		try {
-			PreparedStatement ps = con
-					.prepareStatement("UPDATE files SET file_state = ? WHERE file_id = ?");
+			PreparedStatement ps = con.prepareStatement("UPDATE files SET file_state = ? WHERE file_id = ?");
 			ps.setString(1, "DELETE");
 			ps.setString(2, file_id);
+			result = ps.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			result = -1;
+		}
+		return result;
+	}
+
+	public static int localRemove(String file_id) {
+		int result = -1;
+
+		Connection con = getConnection();
+		try {
+			PreparedStatement ps = con.prepareStatement("DELETE FROM  files WHERE file_id = ?");
+			ps.setString(1, file_id);
 			result = ps.executeUpdate();
 
 		} catch (SQLException e) {
@@ -519,8 +548,7 @@ public class DBManagerLocal {
 		return result;
 	}
 
-	public static boolean fileHashChanged(String file_id,
-			String current_file_hash) {
+	public static boolean fileHashChanged(String file_id, String current_file_hash) {
 		boolean result = false;
 		String prev_hash = "";
 		Connection con = getConnection();

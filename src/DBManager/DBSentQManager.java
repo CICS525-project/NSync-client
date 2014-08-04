@@ -49,12 +49,12 @@ public class DBSentQManager extends DBManagerLocal implements Runnable
 		java.sql.Timestamp last_local_update =  getTimeStamp(obj.getTimeStamp());
 
 		file_id = obj.getID();
-		
+		System.out.println("**DBMANAGER: SentQManager **********************************************************");
 		System.out.println("file id_________________________________" +file_id);
 		System.out.println("file_path_________________________________" +file_path);
 		System.out.println("file_name_________________________________" +file_name);
 		System.out.println("ROW ID is _________________________________" +file_id);
-		
+		System.out.println("**DBMANAGER: SentQManager ***********************************************************");
 		//new_status = setNewState(event, getCurrentState(file_id));
 		System.out.println("NEW STATUS _________________________________" +new_status);
 		

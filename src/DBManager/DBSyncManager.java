@@ -40,11 +40,11 @@ public class DBSyncManager extends DBManagerLocal{
 						"\t" + file_name + "\t" + file_hash +
 						"\t" + file_state + "\t" + last_local + "\t" + last_server + "\t" + user_id);
 				 sobj = new SendObject(file_id, file_name, file_path, toEvent(file_state), date, false, "");
-                 System.out.println("The object id in the SYNC CLASS &&&&&&&&&&&&&&&---------------------------------"+sobj.getID());
-				//if(sobj!=null)
-				//{
-					//NSyncClient.toSendQ.put(sobj);
-				//}
+                 //System.out.println("The object id in the SYNC CLASS &&&&&&&&&&&&&&&---------------------------------"+sobj.getID());
+				if(sobj!=null)
+				{
+					NSyncClient.toSendQ.put(sobj);
+				}
 			}
 		} catch (Exception e ) {
 			e.printStackTrace(System.out);
@@ -73,6 +73,7 @@ public class DBSyncManager extends DBManagerLocal{
 		{		
 
 			event = findEventfromServer(file_id, file_hash, file_name);
+			System.out.println("**DBMANAGER: SyncQManager **********************************************************");
 			if(event.equalsIgnoreCase("CREATE"))
 			{
 				try
@@ -128,7 +129,7 @@ public class DBSyncManager extends DBManagerLocal{
 			{
 
 				System.out.println("Deleting file -----------------------------------------------------");
-				success = localDelete(file_id);	
+				success = localRemove(file_id);	
 			}
 
 
