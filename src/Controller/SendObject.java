@@ -24,7 +24,7 @@ public class SendObject implements Serializable {
 
     public enum EventType {
 
-        Create, Delete, Rename, Modify
+        Create, Delete, Rename, Modify, Share
     }
 
     public SendObject() {
