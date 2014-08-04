@@ -111,6 +111,137 @@ public class DBManagerLocal {
 		return result;
 	}
 
+	
+	public static java.sql.Timestamp getTimeStamp(Date d) {
+		// java.util.Date today = new java.util.Date();
+		return new java.sql.Timestamp(d.getTime());
+	}
+
+	public static String getCurrentState(String file_id) {
+		Connection con = getConnection();
+		String current_state = "";
+
+		try {
+			PreparedStatement ps = con
+					.prepareStatement("SELECT file_state FROM files WHERE file_id = ?");
+			ps.setString(1, file_id);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				current_state = rs.getString(1);
+
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return current_state;
+	}
+	
+	public static String getrowID(String file_path, String file_name) {
+		Connection con = getConnection();
+		String file_id = "";
+
+		try {
+			PreparedStatement ps = con
+					.prepareStatement("SELECT file_id FROM files WHERE file_name = ? AND file_path=? AND file_state <> ?");
+			ps.setString(1, file_name);
+			ps.setString(2, file_path);
+			ps.setString(3, "DELETE");
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				file_id = rs.getString(1);
+
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return file_id;
+	}
+
+	public static String getFileHash(String file_id) {
+		Connection con = getConnection();
+		String file_hash = "";
+
+		try {
+			PreparedStatement ps = con
+					.prepareStatement("SELECT file_hash FROM files WHERE file_id = ?");
+			ps.setString(1, file_id);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				file_hash = rs.getString(1);
+
+			} else {
+				System.out.println("FILE HASH NOT FOUND ______________________________________");
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return file_hash;
+
+	}
+
+	/*
+	 * generate id for file combination of file_path, file_name, user_name,
+	 */
+	public static String generateHashID(String file_name, String file_path,
+			String user_name, java.sql.Timestamp timestamp)
+			throws NoSuchAlgorithmException {
+		String hash_string;
+		String identity_string = file_name + file_path + user_name
+				+ timestamp.toString();
+		MessageDigest m = MessageDigest.getInstance("MD5");
+		m.update(identity_string.getBytes(), 0, identity_string.length());
+		hash_string = new BigInteger(1, m.digest()).toString(16);
+		return hash_string;
+	}
+
+	public static ResultSet getOfflineChanges() {
+		Connection con = getConnection();
+		String file_id = "";
+		ResultSet rs = null;
+
+		try {
+			PreparedStatement ps = con
+					.prepareStatement("SELECT * FROM files WHERE last_local_update > last_server_update OR file_state = 'DELETE'");
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				file_id = rs.getString(1);
+
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return rs;
+	}
+	
+	public static String getFileName(String file_id) {
+		Connection con = getConnection();
+		String file_name = "";
+
+		try {
+			PreparedStatement ps = con
+					.prepareStatement("SELECT file_name FROM files WHERE file_id = ?");
+			ps.setString(1, file_id);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				file_name = rs.getString(1);
+
+			} else {
+				System.out
+						.println("FILE NAME NOT FOUND N______________________________________");
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return file_name;
+
+	}
 	public static int localinsert(String file_id, String file_path,
 			String file_name, String file_hash, String file_state,
 			String user_id, java.sql.Timestamp last_local_update) {
@@ -141,6 +272,8 @@ public class DBManagerLocal {
 
 		return result;
 	}
+
+	
 
 	public static int localModify(String file_id, String file_hash,
 			String file_state, java.sql.Timestamp last_local_update) {
@@ -224,8 +357,7 @@ public class DBManagerLocal {
 				ps.setString(3, root_path + file_name
 						+ FileSystems.getDefault().getSeparator() + "%");
 				result = ps.executeUpdate();
-				System.out
-						.println("________________________________________________________________________");
+				System.out.println("________________________________________________________________________");
 			} catch (Exception e) {
 				e.printStackTrace();
 				result = -1;
@@ -258,69 +390,9 @@ public class DBManagerLocal {
 		return result;
 	}
 
-	public static String getCurrentState(String file_id) {
-		Connection con = getConnection();
-		String current_state = "";
+	
 
-		try {
-			PreparedStatement ps = con
-					.prepareStatement("SELECT file_state FROM files WHERE file_id = ?");
-			ps.setString(1, file_id);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				current_state = rs.getString(1);
-
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return current_state;
-	}
-
-	// maintain hierarchy for events.
-	public static String setNewState(String event, String current_state) {
-		String new_state = "";
-
-		// delete has highest hierarchy if delete event then set to delete
-		if (event.equalsIgnoreCase("DELETE")) {
-			new_state = "DELETE";
-
-		}
-
-		// modify has second highest hierarchy if delete event then set to
-		// delete
-		else if (event.equalsIgnoreCase("MODIFY")) {
-			if (current_state.equalsIgnoreCase("DELETE")) {
-				new_state = "DELETE";
-			} else {
-				new_state = "MODIFY";
-			}
-		}
-
-		// CREATE has third highest hierarchy
-		else if (event.equalsIgnoreCase("CREATE")) {
-			if ( (current_state.equalsIgnoreCase("MODIFY")) || (current_state.equalsIgnoreCase("DELETE")) ) {
-				new_state = current_state;
-			} else {
-				new_state = "CREATE";
-			}
-		}
-
-		// RENAME lowest in hierarchy
-		else if (event.equalsIgnoreCase("RENAME")) {
-			if ((current_state.equalsIgnoreCase("MODIFY")) || (current_state.equalsIgnoreCase("DELETE")) || (current_state.equalsIgnoreCase("CREATE"))) {
-				new_state = current_state;
-			} 
-			
-			else {
-				new_state = "RENAME";
-			}
-		}
-		
-		return new_state;
-	}
-
+	
 	public static int localModifyLastServerUpdate(String file_id, java.sql.Timestamp last_server_update) {
 		int result = -1;
 		String state = "";
@@ -360,6 +432,50 @@ public class DBManagerLocal {
 		return result;
 	}
 
+	// maintain hierarchy for events.
+		public static String setNewState(String event, String current_state) {
+			String new_state = "";
+
+			// delete has highest hierarchy if delete event then set to delete
+			if (event.equalsIgnoreCase("DELETE")) {
+				new_state = "DELETE";
+
+			}
+
+			// modify has second highest hierarchy if delete event then set to
+			// delete
+			else if (event.equalsIgnoreCase("MODIFY")) {
+				if (current_state.equalsIgnoreCase("DELETE")) {
+					new_state = "DELETE";
+				} else {
+					new_state = "MODIFY";
+				}
+			}
+
+			// CREATE has third highest hierarchy
+			else if (event.equalsIgnoreCase("CREATE")) {
+				if ( (current_state.equalsIgnoreCase("MODIFY")) || (current_state.equalsIgnoreCase("DELETE")) ) {
+					new_state = current_state;
+				} else {
+					new_state = "CREATE";
+				}
+			}
+
+			// RENAME lowest in hierarchy
+			else if (event.equalsIgnoreCase("RENAME")) {
+				if ((current_state.equalsIgnoreCase("MODIFY")) || (current_state.equalsIgnoreCase("DELETE")) || (current_state.equalsIgnoreCase("CREATE"))) {
+					new_state = current_state;
+				} 
+				
+				else {
+					new_state = "RENAME";
+				}
+			}
+			
+			return new_state;
+		}
+
+	
 	public static boolean isIDInDB(String file_id) {
 		boolean result = false;
 		Connection con = getConnection();
@@ -379,6 +495,8 @@ public class DBManagerLocal {
 		}
 		return result;
 	}
+	
+	
 
 	public static boolean isFileInDB(String file_name, String file_path) {
 		boolean result = false;
@@ -437,8 +555,7 @@ public class DBManagerLocal {
 		String prev_file_name = "";
 		Connection con = getConnection();
 		try {
-			PreparedStatement ps = con
-					.prepareStatement("SELECT file_name FROM files WHERE file_id = ?");
+			PreparedStatement ps = con.prepareStatement("SELECT file_name FROM files WHERE file_id = ?");
 			ps.setString(1, file_id);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
@@ -461,49 +578,9 @@ public class DBManagerLocal {
 		return result;
 	}
 
-	public static java.sql.Timestamp getTimeStamp(Date d) {
-		// java.util.Date today = new java.util.Date();
-		return new java.sql.Timestamp(d.getTime());
-	}
-
-	/*
-	 * generate id for file combination of file_path, file_name, user_name,
-	 */
-	public static String generateHashID(String file_name, String file_path,
-			String user_name, java.sql.Timestamp timestamp)
-			throws NoSuchAlgorithmException {
-		String hash_string;
-		String identity_string = file_name + file_path + user_name
-				+ timestamp.toString();
-		MessageDigest m = MessageDigest.getInstance("MD5");
-		m.update(identity_string.getBytes(), 0, identity_string.length());
-		hash_string = new BigInteger(1, m.digest()).toString(16);
-		return hash_string;
-	}
-
-	public static String getrowID(String file_path, String file_name) {
-		Connection con = getConnection();
-		String file_id = "";
-
-		try {
-			PreparedStatement ps = con
-					.prepareStatement("SELECT file_id FROM files WHERE file_name = ? AND file_path=? AND file_state <> ?");
-			ps.setString(1, file_name);
-			ps.setString(2, file_path);
-			ps.setString(3, "DELETE");
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				file_id = rs.getString(1);
-
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return file_id;
-	}
-
+	
+	
+	
 	public static boolean findConflict(SendObject obj) {
 		java.sql.Timestamp server_ts = getTimeStamp(obj.getTimeStamp());
 		java.sql.Timestamp last_local_ts = null;
@@ -513,8 +590,7 @@ public class DBManagerLocal {
 		Connection con = getConnection();
 
 		try {
-			PreparedStatement ps = con
-					.prepareStatement("SELECT last_local_update, last_server_update FROM files WHERE file_id = ?");
+			PreparedStatement ps = con.prepareStatement("SELECT last_local_update, last_server_update FROM files WHERE file_id = ?");
 			ps.setString(1, file_id);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
@@ -524,14 +600,11 @@ public class DBManagerLocal {
 				if ((last_local_ts != server_ts)
 						|| (last_server_ts != server_ts)
 						|| (last_local_ts != last_server_ts)) {
-					System.out
-							.println("CONFLICT EXISTS Last local Update______"
+					System.out.println("CONFLICT EXISTS Last local Update______"
 									+ last_local_ts);
-					System.out
-							.println("CONFLICT EXISTS Last server Update______"
+					System.out.println("CONFLICT EXISTS Last server Update______"
 									+ last_server_ts);
-					System.out
-							.println("CONFLICT EXISTS Last on server Update______"
+					System.out.println("CONFLICT EXISTS Last on server Update______"
 									+ server_ts);
 					conflict = true;
 				}
@@ -550,73 +623,9 @@ public class DBManagerLocal {
 
 	}
 
-	public static String getFileHash(String file_id) {
-		Connection con = getConnection();
-		String file_hash = "";
-
-		try {
-			PreparedStatement ps = con
-					.prepareStatement("SELECT file_hash FROM files WHERE file_id = ?");
-			ps.setString(1, file_id);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				file_hash = rs.getString(1);
-
-			} else {
-				System.out.println("FILE HASH NOT FOUND ______________________________________");
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return file_hash;
-
-	}
-
-	public static String getFileName(String file_id) {
-		Connection con = getConnection();
-		String file_name = "";
-
-		try {
-			PreparedStatement ps = con
-					.prepareStatement("SELECT file_name FROM files WHERE file_id = ?");
-			ps.setString(1, file_id);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				file_name = rs.getString(1);
-
-			} else {
-				System.out
-						.println("FILE NAME NOT FOUND N______________________________________");
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return file_name;
-
-	}
-
-	public static ResultSet getOfflineChanges() {
-		Connection con = getConnection();
-		String file_id = "";
-		ResultSet rs = null;
-
-		try {
-			PreparedStatement ps = con
-					.prepareStatement("SELECT * FROM files WHERE last_local_update > last_server_update OR state = 'DELETE'");
-			rs = ps.executeQuery();
-			if (rs.next()) {
-				file_id = rs.getString(1);
-
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return rs;
-	}
+	
+	
+	
 
 	public static String findEventfromServer(String file_id, String new_hash,
 			String new_file_name) {
