@@ -27,7 +27,7 @@ public class CommunicationManager {
 
 	public static int serverPort = 9005;
 
-	public static int serverId = 1;//getRandomServer();
+	public static int serverId = getRandomServer();
 
 	public static NsyncServerInterface server;
 
@@ -68,7 +68,7 @@ public class CommunicationManager {
 			
                         String storageConnectionString = "DefaultEndpointsProtocol=http;"
 					+ "AccountName=portalvhds27bmmb28df76b;"
-					+ "AccountKey=+/R+aDSrb9BDH+HuU2eciV2fP4l6C1timdwao5czZrLE2vML3lt0omtSJhsL4NNi7rmTDWEflNlYXaeh0k+IZw==";
+					+ "AccountKey=5+YVSLUYoJgsCZqW9Zmi/r3ZBg+/UnSf4q3rIyOAEox5kVY+RkQJEc2e6+C8nUTODNYAhAsOD+FwKnRm/MWcWQ==";
 			String dbConnectionString = "jdbc:sqlserver://e55t52o9fy.database.windows.net:1433"
 					+ ";"
 					+ "database=db_like"

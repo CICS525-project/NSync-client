@@ -64,7 +64,9 @@ public class TrayIconBasic {
         shareFiles.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Do some cleanup
-               JOptionPane.showMessageDialog(null, "Coming soon!!!");
+               //JOptionPane.showMessageDialog(null, "Coming soon!!!");
+            	
+            	new FileChooserDialog();
             }
         });
  

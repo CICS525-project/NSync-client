@@ -1,5 +1,6 @@
 package Communication;
 
+import java.awt.TrayIcon;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -8,6 +9,7 @@ import java.rmi.RemoteException;
 import Controller.SendObject;
 import Controller.UserProperties;
 import DBManager.DBManagerLocal;
+import GUI.TrayIconBasic;
 
 public class ConnectClientServer {
 
@@ -25,7 +27,7 @@ public class ConnectClientServer {
 					try {
 						if (!CommunicationManager.server.maintainQueue(queue)) {
 							// run sync method
-							
+
 						}
 					} catch (RemoteException e1) {
 						// could be because server is down or because the client
@@ -51,25 +53,36 @@ public class ConnectClientServer {
 					}
 					if (QueueManager.getQueueLength(queue) > 0) {
 						// call to DBManager method to resolve conflicts missing
-						
-						
-						
+
 						String message = QueueManager.deque(queue);
 						System.out
 								.println("The message dequeued is " + message);
 						SendObject d = QueueManager
 								.convertStringToSendObject(message);
-						
-						if(DBManagerLocal.findConflict(d)) {
+
+						if (DBManagerLocal.findConflict(d)) {
 							try {
-								LocalFileManager.copyConflictedFile(d, d.getUserID() + "_conflict_" + d.getFileName());
+								LocalFileManager.copyConflictedFile(
+										d,
+										d.getUserID() + "_conflict_"
+												+ d.getFileName());
 							} catch (IOException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							BlobManager.downloadBlob(d.getFilePath() + "/" + d.getFileName());
-						} else {						
-							processMessageFromQueue(d);
+							BlobManager.downloadBlob(d.getFilePath() + "/"
+									+ d.getFileName());
+							TrayIconBasic.displayMessage(
+									"Conflict found on " + d.getFilePath()
+											+ "/" + d.getFileName(),
+									"New file called "
+											+ d.getUserID()
+											+ "_conflict_"
+											+ d.getFileName()
+											+ " has been created in the location of the conflict",
+									TrayIcon.MessageType.WARNING);
+						} else {
+							processMessageFromQueue(d);						
 						}
 						// call to dbManager to update the SendObject missing
 					}
@@ -90,14 +103,17 @@ public class ConnectClientServer {
 		if (s.getEvent().equals(SendObject.EventType.Create)
 				|| s.getEvent().equals(SendObject.EventType.Modify)) {
 			LocalFileManager.download(s);
+			TrayIconBasic.displayMessage("File Added/Updated", s.getFilePath() + "/" + s.getFileName() + " added", TrayIcon.MessageType.INFO);
 		}
 
 		if (s.getEvent().equals(SendObject.EventType.Delete)) {
 			LocalFileManager.delete(s);
+			TrayIconBasic.displayMessage("File Deleted", s.getFilePath() + "/" + s.getFileName() + " deleted", TrayIcon.MessageType.INFO);
 		}
 
 		if (s.getEvent().equals(SendObject.EventType.Rename)) {
 			LocalFileManager.rename(s);
+			TrayIconBasic.displayMessage("File Renamed", s.getFilePath() + "/" + s.getFileName() + " renamed", TrayIcon.MessageType.INFO);
 		}
 
 	}
