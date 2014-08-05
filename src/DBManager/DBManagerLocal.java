@@ -134,8 +134,8 @@ public class DBManagerLocal {
 		}
 		long time = date.getTime();
 		//java.sql.Timestsamp ep = new java.sql.Timestamp(time);
-		//System.out.println("the epoch time is tttttttttttttttttttttttttttttttttttttt" + getTimeStamp(date));
-		return new java.sql.Timestamp(time);
+		System.out.println("the epoch time is tttttttttttttttttttttttttttttttttttttt" + getTimeStamp(date));
+		return getTimeStamp(date);
 		
 	}
 	public static String getCurrentState(String file_id) {
@@ -230,22 +230,30 @@ public class DBManagerLocal {
 			if (rs.next()) 
 			{
 				last_update = rs.getTimestamp(1);
+				System.out.println("**DB:SyncManager: getLastTimestamp()***********************************"+last_update);
 
 			}
 			else 
 			{
 				last_update = getEpochDate(); //check last update is not null before sending if its null it means db is 
-									//empty and user is logging on device for first time so date set to epoch time
+				System.out.println("**DB:SyncManager: getLastTimestamp()***********************************"+last_update);					//empty and user is logging on device for first time so date set to epoch time
 			}
 			
 
-		} catch (SQLException e) {
+		} catch (SQLException e) 
+		{
 			e.printStackTrace();
 		}
-		System.out.println("**DB:SyncManager: getLastTimestamp()***********************************"+last_update);
-		return last_update;
-	}
-
+		if(last_update == null)
+		{
+			return getEpochDate();
+		}
+		else 
+		{
+			return last_update;
+		}
+		}
+	
 	public static ResultSet getOfflineChanges() {
 		Connection con = getConnection();
 		String file_id = "";
