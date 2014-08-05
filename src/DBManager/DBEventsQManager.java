@@ -28,7 +28,7 @@ public class DBEventsQManager extends DBManagerLocal implements Runnable{
 
 				outObj = processQueue(inObj);
 
-				if(outObj!=null)
+				if(outObj!=null && !(outObj.isIsAFolder()))
 				{
 					NSyncClient.toSendQ.put(outObj);
 					System.out.println("INSIDE DB FILE ID IS*********************************************************" + outObj.getID());
