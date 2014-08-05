@@ -32,8 +32,8 @@ public class FolderWatcher implements Runnable {
     private final Map<WatchKey, Path> keys;
     private final Path dir = NSyncClient.dir;
     //private static BlockingQueue<SendObject> toSendQ = NSyncClient.toSendQ;
-    private static BlockingQueue<SendObject> eventsQ = NSyncClient.eventsQ;
-    //private static BlockingQueue<SendObject> eventsQ = new LinkedBlockingQueue<SendObject>();
+    //private static BlockingQueue<SendObject> eventsQ = NSyncClient.eventsQ;
+    private static BlockingQueue<SendObject> eventsQ = new LinkedBlockingQueue<SendObject>();
 
     public FolderWatcher() throws IOException {
         watcher = FileSystems.getDefault().newWatchService();

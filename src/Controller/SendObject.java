@@ -1,10 +1,13 @@
 package Controller;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.security.MessageDigest;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SendObject implements Serializable {
 
@@ -72,7 +75,21 @@ public class SendObject implements Serializable {
             this.hash = null;
         }
     }
-
+    
+    public SendObject(String fileID, String fileName, String filePath, EventType event, Date timeStamp,
+            boolean isAFolder, String newFileName, String hash, String sharedWith) {
+        this.ID = fileID;
+        this.fileName = fileName;
+        this.newFileName = newFileName;
+        this.filePath = filePath;
+        this.event = event;
+        this.timeStamp = timeStamp;
+        this.isAFolder = isAFolder;
+        this.enteredIntoDB = false;
+        this.hash = hash;
+        this.sharedWith = sharedWith;
+    }
+    
     /**
      * @return the newFileName
      */
@@ -202,8 +219,23 @@ public class SendObject implements Serializable {
             } else {
                 this.hash = getChecksum(NSyncClient.dir.toString() + "\\" + this.filePath + "\\" + this.fileName, "MD5");
             }
-        } catch (Exception e) {
+        } 
+        catch(FileNotFoundException e){
             System.out.println("Exception during creating hash of the file (" + this.fileName + ")" + e.getMessage());
+            
+            //This part is for the large files which take sometime to copy. 
+            //wait for 4 seconds
+            try {
+                Thread.sleep(4000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(SendObject.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if (this.event != EventType.Delete)
+                this.setHash();
+        }
+        catch (Exception e) {
+            System.out.println("Exception during creating hash of the file (" + this.fileName + ")" + e.getMessage());
+            e.printStackTrace(System.out);
         }
     }
 
