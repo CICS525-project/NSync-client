@@ -46,7 +46,7 @@ public class SendObject implements Serializable {
         
         sharedWith = null;
         
-        if ((event != EventType.Create) && !isAFolder) {
+        if ((event != EventType.Delete) && !isAFolder) {
             this.setHash();
         } else {
             this.hash = null;
@@ -63,8 +63,14 @@ public class SendObject implements Serializable {
         this.timeStamp = timeStamp;
         this.isAFolder = isAFolder;
         this.enteredIntoDB = false;
-        this.setHash();
+        
         this.setUserID(UserProperties.userID);
+        
+        if ((event != EventType.Delete) && !isAFolder) {
+            this.setHash();
+        } else {
+            this.hash = null;
+        }
     }
 
     /**
