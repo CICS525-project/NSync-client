@@ -145,7 +145,7 @@ public class QueueManager {
 	}
 
 	public static long getQueueLength(String queueName) {
-		System.out.println("The queue name is " + queueName);
+		//System.out.println("The queue name is " + queueName);
 		long cachedMessageCount = 0;
 		try {
 			// Retrieve storage account from connection-string.
@@ -166,8 +166,7 @@ public class QueueManager {
 			cachedMessageCount = queue.getApproximateMessageCount();
 
 			// Display the queue length.
-			System.out.println(String.format("Queue length: %d",
-					cachedMessageCount));
+			
 		} catch (Exception e) {
 			// Output the stack trace.
 			e.printStackTrace();
@@ -198,7 +197,7 @@ public class QueueManager {
 
 		if (o.getEvent().toString() != null) {
 			s = o.getFileName() + "___" + o.getNewFileName() + "___"
-					+ o.getFilePath() + "___" + o.getEvent().toString() + "___"
+					+ o.getFilePath() + "___" + o.getEvent() + "___"
 					+ enteredInDB + "___" + o.getTimeStamp().toString() + "___"
 					+ isAFolder + "___" + hash + "___" + o.getID() + "___"
 					+ o.getUserID();

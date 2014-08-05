@@ -91,7 +91,7 @@ public class ClientHelper {
 
 		while ((line = reader.readLine()) != null) {
 			System.out.println(line);
-			if (line.length() > 4) {
+			if (line.trim().length() > 4 && !line.equals("")) {
 				l = line.split("-");
 				dbParams.put(l[0].trim(), l[1].trim());
 			}

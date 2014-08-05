@@ -86,7 +86,7 @@ public class BlobManager {
 					blob.upload(fis, source.length());
 				}
 				fis.close();
-				if (blob.getProperties().getLeaseState()
+				if (blob.exists() && blob.getProperties().getLeaseState()
 						.equals(LeaseState.LEASED)) {
 					blob.breakLease(0);
 				}
@@ -416,40 +416,8 @@ public class BlobManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	public static String acquireLease(String blobName, String containerName,
-			int serverId) {
-		CloudBlob b = null;
-		try {
-			CloudStorageAccount storageAccount = CloudStorageAccount
-					.parse(CommunicationManager
-							.getStorageConnectionString(serverId));
-
-			CloudBlobClient blobClient = storageAccount.createCloudBlobClient();
-			CloudBlobContainer container = blobClient
-					.getContainerReference(containerName);
-			b = container.getBlockBlobReference(blobName);
-
-			if (b.exists()) {
-				String leaseID = b.acquireLease(null, generateLeaseId());
-
-				b.breakLease(0);
-				return leaseID;
-			} else {
-				return "BlobDoesNotExist";
-			}
-		} catch (URISyntaxException | InvalidKeyException | StorageException ex) {
-			ex.printStackTrace();
-			try {
-				b.breakLease(0);
-			} catch (StorageException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return null;
-		}
-	}
+	}	
+	
 
 	private static String generateLeaseId() {
 		String uuid = UUID.randomUUID().toString();
@@ -457,9 +425,5 @@ public class BlobManager {
 		return uuid;
 	}
 
-	public static void main(String[] args) {
-		String l = acquireLease("ali.JPG", "yanki", 2);
-		System.out.println("Lease is " + l);
-
-	}
+	
 }

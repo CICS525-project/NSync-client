@@ -10,7 +10,7 @@ public interface NsyncServerInterface extends Remote {
 
     public boolean getPermission(SendObject s) throws RemoteException;
     
-    public SendObject serverDBUpdate(SendObject s) throws RemoteException;
+    public SendObject serverDBUpdate(SendObject s, String queueName) throws RemoteException;
     
     public void serverToClientSync(Timestamp lastTS, String qName) throws RemoteException;
     

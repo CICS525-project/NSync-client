@@ -26,10 +26,18 @@ public class ClientUpdateRunnable {
 							System.out.println("Just took something from the queue "
 									+ QueueManager.convertSendObjectToString(s));
 							while (true) {
-								if (CommunicationManager.server
-										.getPermission(s)) {
+								try {
+									CommunicationManager.server
+										.getPermission(s);
+									break;
+								} catch (Exception e) {
+									System.out.println("Permission not granted");
+									Thread.sleep(5000);
+									continue;
+									
+								}}
 									SendObject r = CommunicationManager.server
-											.serverDBUpdate(s);
+											.serverDBUpdate(s, UserProperties.getQueueName());
 									// if (r.isEnteredIntoDB()) {
 									String fullPath = UserProperties
 											.getDirectory()
@@ -57,20 +65,14 @@ public class ClientUpdateRunnable {
 												.println("\nCalling the blob rename on "
 														+ fullPath + " \n");
 										// BlobManager.renameBlob(
-									}
-									break;
-								} else {
-									System.out.println("Permission not granted");
-									Thread.sleep(35000);
-									continue;
-								}
-							}
+									}								
+							
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						} catch (RemoteException e) {
-							// NSyncClient.toSendQ.add(s);
+							// TODO Auto-generated catch block
 							e.printStackTrace();
-						}
+						} 
 					} else {
 						TrayIconBasic
 								.displayMessage(
