@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 public class BlobManager {
 	// add the username to this string instead of default
 
-	private static String containerName = "yanki";// UserProperties.getUsername().trim();
+	private static String containerName = UserProperties.getUsername().trim();
 	private static String url = CommunicationManager.getURL() + containerName
 			+ "/";
 
