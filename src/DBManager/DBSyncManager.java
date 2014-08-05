@@ -25,7 +25,8 @@ public class DBSyncManager extends DBManagerLocal{
 		SendObject sobj=null;
 		try
 		{
-			while (rs.next()) {
+			while (rs.next()) 
+			{
 				String file_id = rs.getString("file_id");
 				String file_path = rs.getString("file_path");
 				String file_name = rs.getString("file_name");
@@ -125,6 +126,7 @@ public class DBSyncManager extends DBManagerLocal{
 
 
 			}
+			
 			else if(event.equalsIgnoreCase("DELETE"))
 			{
 
@@ -132,6 +134,12 @@ public class DBSyncManager extends DBManagerLocal{
 				success = localRemove(file_id);	
 			}
 
+			else if(event.equalsIgnoreCase("SHARE"))
+			{
+
+				System.out.println("SHARING file FROM SERVER IGNORE -----------------------------------------------------");
+				//DO NOTHING 	
+			}
 
 			obj.setEnteredIntoDB(true);
 			obj.setID(file_id);

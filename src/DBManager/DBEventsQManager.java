@@ -44,19 +44,20 @@ public class DBEventsQManager extends DBManagerLocal implements Runnable{
 		public static SendObject processQueue(SendObject obj) // process queue in events queue class
 		{
 			
-			System.out.println("**DBMANAGER: EventQManager **********************************************************");
+			System.out.println("**DBMANAGER: EventQManager  **********************************************************");
 			String file_id=obj.getID();
 			int success = -1;
 			String file_path = obj.getFilePath();
 			String file_name = obj.getFileName();
 			String file_hash = obj.getHash();
+			String shared_with_userID = obj.getSharedWith();
 			java.sql.Timestamp last_local_update =  getTimeStamp(obj.getTimeStamp());
 			String userID = obj.getUserID();
 			String new_file_name;
 			EventType event = obj.getEvent();
 			String string_event = obj.getEvent().toString().toUpperCase();
 			String new_state = "";
-		
+
 	
 				if(event == EventType.Create && !(obj.isIsAFolder()))
 				{
@@ -92,7 +93,10 @@ public class DBEventsQManager extends DBManagerLocal implements Runnable{
 					file_id = getrowID(file_path, file_name);
 					new_state = setNewState(string_event, getCurrentState(file_id));
 					if(file_hash!=null && file_id!=null)
+						
 					{
+							
+						
 						if(fileHashChanged(file_id, file_hash))
 						{
 							System.out.println("Modifying file local -----------------------------------------------------"+file_id);
@@ -129,6 +133,14 @@ public class DBEventsQManager extends DBManagerLocal implements Runnable{
 					
 
 				}
+				
+				else if(event == EventType.Share && !(obj.isIsAFolder()))
+				{
+					file_id = getrowID(file_path, file_name);
+					System.out.println("Updating Local Share -----------------------------------------------------"+file_id);
+					success = localShare(file_id, shared_with_userID);	
+				}
+
 				else if(event == EventType.Delete && !(obj.isIsAFolder()))
 				{
 					file_id = getrowID(file_path, file_name);

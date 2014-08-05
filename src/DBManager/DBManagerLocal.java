@@ -72,6 +72,7 @@ public class DBManagerLocal {
 					+ "                   last_local_update      TIMESTAMP, "
 					+ "                   last_server_update     TIMESTAMP, "
 					+ "                   user_id	  VARCHAR(200), "
+					+ "                   shared_with	  VARCHAR(200), "
 					+ "                   primary key(file_id)"
 					+ "                  ) ");
 			stmt.close();
@@ -197,19 +198,42 @@ public class DBManagerLocal {
 		hash_string = new BigInteger(1, m.digest()).toString(16);
 		return hash_string;
 	}
+	public static ResultSet getLastTimeStamp() {
+		Connection con = getConnection();
+		String file_id = "";
+		ResultSet rs = null;
+
+		try {
+			PreparedStatement ps = con.prepareStatement("SELECT MAX(last_server_update) from files");
+			rs = ps.executeQuery();
+			
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return rs;
+	}
 
 	public static ResultSet getOfflineChanges() {
 		Connection con = getConnection();
 		String file_id = "";
+		java.sql.Timestamp last_update;
 		ResultSet rs = null;
 
 		try {
 			PreparedStatement ps = con
 					.prepareStatement("SELECT * FROM files WHERE last_local_update > last_server_update OR file_state = 'DELETE' OR file_state = 'RENAME'");
 			rs = ps.executeQuery();
-			if (rs.next()) {
-				file_id = rs.getString(1);
+			if (rs.next()) 
+			{
+				last_update = rs.getTimestamp(1);
 
+			}
+			else 
+			{
+				last_update = null; //check last update is not null before sending if its null it means db is 
+									//empty and user is logging on device for first time
 			}
 
 		} catch (SQLException e) {
@@ -427,7 +451,24 @@ public class DBManagerLocal {
 		return result;
 		}
 
+	public static int localShare(String file_id, String shared_withID)
+	{
+		int result = -1;
 
+		Connection con = getConnection();
+		try {
+			PreparedStatement ps = con.prepareStatement("UPDATE files SET share_with = ? WHERE file_id = ?");
+			ps.setString(1, shared_withID);
+			ps.setString(2, file_id);
+			result = ps.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			result = -1;
+		}
+		return result;
+	}
+	
 	public static int localDelete(String file_id) {
 		int result = -1;
 
@@ -470,12 +511,17 @@ public class DBManagerLocal {
 				new_state = "DELETE";
 
 			}
+			
+			else if (event.equalsIgnoreCase("SHARE")) {
+				new_state = current_state;
+			}
+
 
 			// modify has second highest hierarchy if delete event then set to
 			// delete
 			else if (event.equalsIgnoreCase("MODIFY")) {
 				if (current_state.equalsIgnoreCase("DELETE")) {
-					new_state = "DELETE";
+					new_state = current_state;
 				} else {
 					new_state = "MODIFY";
 				}
