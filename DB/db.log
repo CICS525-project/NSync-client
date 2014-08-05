@@ -1,3 +1,6 @@
-/*C4*/SET SCHEMA PUBLIC
+/*C3*/SET SCHEMA PUBLIC
 CREATE TABLE IF NOT EXISTS files(file_id VARCHAR(200),                    file_path   VARCHAR(200),                     file_name   VARCHAR(200),                     file_hash   VARCHAR(200), \u0009\u0009\u0009\u0009\u0009  file_state   VARCHAR(200),                   last_local_update      TIMESTAMP,                    last_server_update     TIMESTAMP,                    user_id\u0009  VARCHAR(200),                    primary key(file_id)                  ) 
 DISCONNECT
+/*C4*/SET SCHEMA PUBLIC
+INSERT INTO FILES VALUES('b0b641020fc3881a70b867996196b0af','','IM000167.JPG',NULL,'Create','2008-07-24 05:58:06.000000',NULL,'yanki')
+COMMIT

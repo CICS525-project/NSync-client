@@ -40,7 +40,8 @@ public class DBController implements Runnable
 	public void run() 
 	{
 		DBManagerLocal.startDatabase();
-		DBSyncManager.DBClientToServerList();
+		DBManagerLocal.getEpochDate();
+		//DBSyncManager.DBClientToServerList();
 		/*SendObject obj = new SendObject();
 		Date d = new Date();
 		obj.setFileName("a.txt");

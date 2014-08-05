@@ -25,14 +25,12 @@ public class ClientUpdateRunnable {
 							s = NSyncClient.toSendQ.take();
 							System.out.println("Just took something from the queue "
 									+ QueueManager.convertSendObjectToString(s));
-							if (CommunicationManager.server.getPermission(UserProperties
-									.getUsername())) {
-								SendObject r = CommunicationManager.server
-										.serverDBUpdate(s);
-								System.out
-										.println("R IS ENTEREDTED INTO THE DB"
-												+ r.isEnteredIntoDB());
-							//	if (r.isEnteredIntoDB()) {
+							while (true) {
+								if (CommunicationManager.server
+										.getPermission(s)) {
+									SendObject r = CommunicationManager.server
+											.serverDBUpdate(s);
+									// if (r.isEnteredIntoDB()) {
 									String fullPath = UserProperties
 											.getDirectory()
 											+ pathParser(r.getFilePath())
@@ -49,27 +47,28 @@ public class ClientUpdateRunnable {
 										BlobManager.uploadFileAsBlob(fullPath);
 									} else if (r.getEvent().equals(
 											SendObject.EventType.Delete)) {
-										//System.out
-										//		.println("\nCalling the blob delete on "
-										//				+ fullPath + " \n");
-										//BlobManager.deleteBlob(fullPath);
+										System.out
+												.println("\nCalling the blob delete on "
+														+ fullPath + " \n");
+										// BlobManager.deleteBlob(fullPath);
 									} else if (r.getEvent().equals(
 											SendObject.EventType.Rename)) {
 										System.out
 												.println("\nCalling the blob rename on "
 														+ fullPath + " \n");
-									//	BlobManager.renameBlob(
-									//			r.getNewFileName(),
-									//			r.getFileName());
+										// BlobManager.renameBlob(
 									}
-									// Thread.sleep(4000);
-									NSyncClient.sentQ.put(r);
-								//}
+									break;
+								} else {
+									System.out.println("Permission not granted");
+									Thread.sleep(35000);
+									continue;
+								}
 							}
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						} catch (RemoteException e) {
-							NSyncClient.toSendQ.add(s);
+							// NSyncClient.toSendQ.add(s);
 							e.printStackTrace();
 						}
 					} else {
@@ -85,9 +84,9 @@ public class ClientUpdateRunnable {
 		// continually check to see if the queue has something in a thread
 		pushThread.start();
 	}
-	
+
 	private static String pathParser(String path) {
-		if(path == null || path.equals("")) {
+		if (path == null || path.equals("")) {
 			return "";
 		} else {
 			return path + "/";

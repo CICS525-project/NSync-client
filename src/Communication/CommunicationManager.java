@@ -27,7 +27,7 @@ public class CommunicationManager {
 
 	public static int serverPort = 9005;
 
-	public static int serverId = getRandomServer();
+	public static int serverId = 1;//getRandomServer();
 
 	public static NsyncServerInterface server;
 
@@ -46,6 +46,11 @@ public class CommunicationManager {
 		return serverIds;
 	}
 
+	public static String getStorageConnectionString(int serverId) {
+		Map<String, String> connParams = getServerConnectionParams(serverId);
+		return connParams.get("storageConnectionString");
+	}
+
 	public static Map<String, String> getServerConnectionParams(int serverId) {
 		Map<String, String> connParams = new HashMap<String, String>();
 		if (serverId == 1) {
@@ -56,7 +61,8 @@ public class CommunicationManager {
 					+ ";"
 					+ "database=db_like"
 					+ ";"
-					+ "user=yanki@jvaakzlcvo" + ";" + "password=almeta%6y";
+					+ "user=yanki@jvaakzlcvo"
+					+ ";" + "password=almeta%6y";
 			connParams.put("storageConnectionString", storageConnectionString);
 			connParams.put("dbConnectionString", dbConnectionString);
 			connParams.put("serverIP", "138.91.113.97");
@@ -65,23 +71,22 @@ public class CommunicationManager {
 		}
 
 		if (serverId == 2) {
-			
-                        String storageConnectionString = "DefaultEndpointsProtocol=http;"
+
+			String storageConnectionString = "DefaultEndpointsProtocol=http;"
 					+ "AccountName=portalvhds27bmmb28df76b;"
 					+ "AccountKey=5+YVSLUYoJgsCZqW9Zmi/r3ZBg+/UnSf4q3rIyOAEox5kVY+RkQJEc2e6+C8nUTODNYAhAsOD+FwKnRm/MWcWQ==";
 			String dbConnectionString = "jdbc:sqlserver://e55t52o9fy.database.windows.net:1433"
 					+ ";"
 					+ "database=db_like"
 					+ ";"
-					+ "user=db2@e55t52o9fy" + ";" + "password=NSyncgroup5";
+					+ "user=db2@e55t52o9fy"
+					+ ";" + "password=NSyncgroup5";
 			connParams.put("storageConnectionString", storageConnectionString);
 			connParams.put("dbConnectionString", dbConnectionString);
 			connParams.put("serverIP", "137.135.56.127");
 			connParams.put("url",
 					"https://portalvhds27bmmb28df76b.blob.core.windows.net/");
-                        
-                        
-                        
+
 		}
 
 		if (serverId == 3) {
@@ -181,20 +186,21 @@ public class CommunicationManager {
 	public static boolean createAccount(ClientSignUpGUI jd, String username,
 			String password, String email) {
 		try {
-			
-			//System.out.println(server.createAccount(username, password, email));
+
+			// System.out.println(server.createAccount(username, password,
+			// email));
 			// call remote method to create account
 			if (server.createAccount(username, password, email)) {
-				//jd.setMessage("Account successfully created");
+				// jd.setMessage("Account successfully created");
 				return true;
 			} else {
-				//jd.setMessage("Account creation failed");
+				// jd.setMessage("Account creation failed");
 				return false;
-			}			
+			}
 		} catch (Exception e) {
 			return false;
 		}
-		
+
 	}
 
 	public static boolean loginUser(ClientGUI cg, String username,
@@ -205,26 +211,28 @@ public class CommunicationManager {
 				String queuename = null;
 				queuename = server.createQueue(username, "");
 				String hash = server.getGeneratedPassword(password);
-				ClientHelper.writeUserParamsToFile(username, hash,
-						queuename);
+				ClientHelper.writeUserParamsToFile(username, hash, queuename);
 				TrayIconBasic.displayMessage("Alert", "Login Successful",
 						TrayIcon.MessageType.INFO);
 				cg.dispose();
-				
-				//create the folder for the user
+
+				// create the folder for the user
 				// create default directory where the program would store info
 				File dir = new File(UserProperties.getDirectory());
-				
+
 				if (!dir.exists()) {
 					dir.mkdir();
 				} else {
 					dir.delete();
 					dir.mkdir();
 				}
-				
-				TrayIconBasic.displayMessage("Alert", "Your watched directory is at " + UserProperties.getDirectory(),
+
+				TrayIconBasic.displayMessage(
+						"Alert",
+						"Your watched directory is at "
+								+ UserProperties.getDirectory(),
 						TrayIcon.MessageType.INFO);
-				
+
 				return true;
 			}
 		} catch (RemoteException e) {
@@ -236,21 +244,23 @@ public class CommunicationManager {
 		return false;
 	}
 
-	public static boolean verifyUser(String username, String password, String qName) {
+	public static boolean verifyUser(String username, String password,
+			String qName) {
 		// call db method to login
 		try {
 			if (server.verifyUser(username, password)) {
 				String queuename = null;
 				queuename = server.createQueue(username, qName);
 				String q2Name = null;
-				if(queuename.endsWith("-")) {
+				if (queuename.endsWith("-")) {
 					queuename = queuename.replace("-", "");
-					
-					//run the sync method on the client
+
+					// run the sync method on the client
 				}
-				ClientHelper.writeUserParamsToFile(username, password, queuename);
-				TrayIconBasic.displayMessage("Alert", "Account Verified",
-						TrayIcon.MessageType.INFO);
+				ClientHelper.writeUserParamsToFile(username, password,
+						queuename);
+				//TrayIconBasic.displayMessage("Alert", "Account Verified",
+				//		TrayIcon.MessageType.INFO);
 				return true;
 			}
 		} catch (RemoteException e) {
@@ -258,10 +268,11 @@ public class CommunicationManager {
 			e.printStackTrace();
 		}
 
-		TrayIconBasic.displayMessage("Error!!!", "Your account could not be verified. Please login again",
+		TrayIconBasic.displayMessage("Error!!!",
+				"Your account could not be verified. Please login again",
 				TrayIcon.MessageType.ERROR);
 		return false;
-		
+
 	}
 
 }
