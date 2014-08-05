@@ -28,7 +28,8 @@ public class ConnectClientServer {
 					try {
 						if (!CommunicationManager.server.maintainQueue(queue)) {
 							// run sync method
-
+							CommunicationManager.verifyUser(UserProperties.getUsername(), UserProperties.getPassword(), UserProperties.getQueueName());
+							 CommunicationManager.server.serverToClientSync(DBManagerLocal.getLastTimeStamp(), UserProperties.getQueueName());
 						}
 					} catch (RemoteException e1) {
 						// could be because server is down or because the client
@@ -90,7 +91,7 @@ public class ConnectClientServer {
 					}
 
 					try {
-						Thread.sleep(60000);
+						Thread.sleep(5000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}

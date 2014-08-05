@@ -27,7 +27,7 @@ public class CommunicationManager {
 
 	public static int serverPort = 9005;
 
-	public static int serverId = getRandomServer();
+	public static int serverId = 1;//getRandomServer();
 
 	public static NsyncServerInterface server;
 

@@ -12,7 +12,7 @@ import com.microsoft.azure.storage.queue.*;
 
 public class QueueManager {
 	public static final String storageConnectionString = CommunicationManager
-			.getStorageConnectionString();	
+			.getStorageConnectionString();
 
 	public static void createQueue(String queueName) {
 		try {
@@ -75,8 +75,7 @@ public class QueueManager {
 			CloudQueue queue = queueClient.getQueueReference(queueName);
 
 			// Retrieve the first visible message in the queue.
-			retrievedMessage = queue.retrieveMessage(200,
-					null, null);
+			retrievedMessage = queue.retrieveMessage(200, null, null);
 
 			// retrievedMessage.
 
@@ -134,7 +133,8 @@ public class QueueManager {
 			for (CloudQueue queue : queueClient.listQueues(prefix)) {
 				// Output each queue name.
 				queue.downloadAttributes();
-				System.out.println(queue.getName() + " - " + queue.getApproximateMessageCount());
+				System.out.println(queue.getName() + " - "
+						+ queue.getApproximateMessageCount());
 				queues.add(queue);
 			}
 		} catch (Exception e) {
@@ -178,8 +178,8 @@ public class QueueManager {
 	public static void main(String[] args) {
 		// System.out.println(User.getUsername());
 		getListOfQueues("yanki");
-		//getQueueLength("democontainer1406268314962");
-		//deque("democontainer1406268314962");
+		// getQueueLength("democontainer1406268314962");
+		// deque("democontainer1406268314962");
 	}
 
 	public static String convertSendObjectToString(SendObject o) {
@@ -194,14 +194,21 @@ public class QueueManager {
 			isAFolder = 1;
 		}
 
-		s = o.getFileName() + "___" + o.getNewFileName() + "___" + o.getFilePath()
-				+ "___" + o.getEvent().toString() + "___" + enteredInDB + "___"
-				+ o.getTimeStamp().toString() + "___" + isAFolder + "___"
-				+ o.getHash() + "___" + o.getID() + "___" + o.getUserID();
+		String hash = (o.getHash() == null) ? "" : o.getHash();
+
+		if (o.getEvent().toString() != null) {
+			s = o.getFileName() + "___" + o.getNewFileName() + "___"
+					+ o.getFilePath() + "___" + o.getEvent().toString() + "___"
+					+ enteredInDB + "___" + o.getTimeStamp().toString() + "___"
+					+ isAFolder + "___" + hash + "___" + o.getID() + "___"
+					+ o.getUserID();
+		} else {
+			s = "___________________________";
+		}
 		return s;
 	}
 
-	public static SendObject convertStringToSendObject(String s) {		
+	public static SendObject convertStringToSendObject(String s) {
 		SendObject o = new SendObject();
 		String[] parts = s.split("___");
 		o.setFileName(parts[0]);
@@ -230,9 +237,9 @@ public class QueueManager {
 			return null;
 		}
 	}
-	
+
 	private static boolean check(String s) {
-		if(s.equals("0")) {
+		if (s.equals("0")) {
 			return false;
 		} else {
 			return true;

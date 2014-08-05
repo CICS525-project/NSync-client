@@ -60,6 +60,8 @@ public class ClientUpdateRunnable {
 									}
 									break;
 								} else {
+									System.out.println("Permission not granted");
+									Thread.sleep(35000);
 									continue;
 								}
 							}

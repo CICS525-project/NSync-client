@@ -9,6 +9,7 @@ import com.microsoft.azure.storage.blob.CloudBlob;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
 import com.microsoft.azure.storage.blob.CloudBlobContainer;
 import com.microsoft.azure.storage.blob.CloudBlockBlob;
+import com.microsoft.azure.storage.blob.LeaseState;
 import com.microsoft.azure.storage.blob.ListBlobItem;
 import com.microsoft.windowsazure.services.blob.models.AccessCondition;
 
@@ -68,6 +69,9 @@ public class BlobManager {
 					.getContainerReference(containerName);
 			blob = container.getBlockBlobReference(FileFunctions
 					.getRelativePath(fullPath));
+			if (blob.exists()) {
+				blob.downloadAttributes();
+			}
 			File source = new File(fullPath);
 			if (source.exists()) {
 				fis = new FileInputStream(source);
@@ -82,7 +86,10 @@ public class BlobManager {
 					blob.upload(fis, source.length());
 				}
 				fis.close();
-				blob.breakLease(0);
+				if (blob.getProperties().getLeaseState()
+						.equals(LeaseState.LEASED)) {
+					blob.breakLease(0);
+				}
 			}
 		} catch (URISyntaxException | InvalidKeyException | StorageException
 				| IOException ex) {
@@ -213,7 +220,9 @@ public class BlobManager {
 			FileOutputStream fos = new FileOutputStream(filePath
 					+ blob.getName());
 			blob.download(fos);
-			blob.breakLease(0);
+			if (blob.getProperties().getLeaseState().equals(LeaseState.LEASED)) {
+				blob.breakLease(0);
+			}
 			fos.close();
 		} catch (URISyntaxException | InvalidKeyException | StorageException
 				| IOException ex) {
@@ -320,7 +329,10 @@ public class BlobManager {
 			}
 			oldBlob.downloadToFile(path);
 			newBlob.uploadFromFile(path);// .startCopyFromBlob(oldBlob);
-			oldBlob.breakLease(0);
+			if (oldBlob.getProperties().getLeaseState()
+					.equals(LeaseState.LEASED)) {
+				oldBlob.breakLease(0);
+			}
 			oldBlob.delete();
 			f.delete();
 
@@ -329,7 +341,10 @@ public class BlobManager {
 			Logger.getLogger(BlobManager.class.getName()).log(Level.SEVERE,
 					null, ex);
 			try {
-				oldBlob.breakLease(0);
+				if (oldBlob.getProperties().getLeaseState()
+						.equals(LeaseState.LEASED)) {
+					oldBlob.breakLease(0);
+				}
 			} catch (StorageException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -359,6 +374,7 @@ public class BlobManager {
 				System.out.println("New name is " + nName);
 				CloudBlob newBlob = container.getBlockBlobReference(nName);
 				oldBlob = container.getBlockBlobReference(oName);
+				oldBlob.downloadAttributes();
 				System.out.println("The blob names are " + blob.getName());
 				// System.out.println("The copy status is " +
 				// blob.getCopyState());
@@ -373,7 +389,10 @@ public class BlobManager {
 				}
 				oldBlob.downloadToFile(path);
 				newBlob.uploadFromFile(path);// .startCopyFromBlob(oldBlob);
-				oldBlob.breakLease(0);
+				if (oldBlob.getProperties().getLeaseState()
+						.equals(LeaseState.LEASED)) {
+					oldBlob.breakLease(0);
+				}
 				oldBlob.delete();
 				f.delete();
 
@@ -384,13 +403,15 @@ public class BlobManager {
 			System.out.println("The message of the exception is "
 					+ ex.getMessage());
 			try {
-				oldBlob.breakLease(0);
+				if (oldBlob.getProperties().getLeaseState()
+						.equals(LeaseState.LEASED)) {
+					oldBlob.breakLease(0);
+				}
 			} catch (StorageException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -412,7 +433,8 @@ public class BlobManager {
 
 			if (b.exists()) {
 				String leaseID = b.acquireLease(null, generateLeaseId());
-				// b.breakLease(0);
+
+				b.breakLease(0);
 				return leaseID;
 			} else {
 				return "BlobDoesNotExist";
@@ -434,9 +456,10 @@ public class BlobManager {
 		// System.out.println("uuid = " + uuid);
 		return uuid;
 	}
+
 	public static void main(String[] args) {
 		String l = acquireLease("ali.JPG", "yanki", 2);
 		System.out.println("Lease is " + l);
 
-	} 
+	}
 }
