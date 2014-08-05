@@ -198,10 +198,10 @@ public class DBManagerLocal {
 		hash_string = new BigInteger(1, m.digest()).toString(16);
 		return hash_string;
 	}
-	public static ResultSet getLastTimeStamp() {
+	public static java.sql.Timestamp getLastTimeStamp() {
 		Connection con = getConnection();
 		String file_id = "";
-		java.sql.Timestamp last_update;
+		java.sql.Timestamp last_update = null;
 		ResultSet rs = null;
 
 		
@@ -224,7 +224,7 @@ public class DBManagerLocal {
 			e.printStackTrace();
 		}
 
-		return rs;
+		return last_update;
 	}
 
 	public static ResultSet getOfflineChanges() {
