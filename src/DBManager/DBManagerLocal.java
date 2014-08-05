@@ -201,11 +201,23 @@ public class DBManagerLocal {
 	public static ResultSet getLastTimeStamp() {
 		Connection con = getConnection();
 		String file_id = "";
+		java.sql.Timestamp last_update;
 		ResultSet rs = null;
 
+		
 		try {
 			PreparedStatement ps = con.prepareStatement("SELECT MAX(last_server_update) from files");
 			rs = ps.executeQuery();
+			if (rs.next()) 
+			{
+				last_update = rs.getTimestamp(1);
+
+			}
+			else 
+			{
+				last_update = null; //check last update is not null before sending if its null it means db is 
+									//empty and user is logging on device for first time
+			}
 			
 
 		} catch (SQLException e) {
@@ -227,13 +239,11 @@ public class DBManagerLocal {
 			rs = ps.executeQuery();
 			if (rs.next()) 
 			{
-				last_update = rs.getTimestamp(1);
-
+				return rs;
 			}
 			else 
 			{
-				last_update = null; //check last update is not null before sending if its null it means db is 
-									//empty and user is logging on device for first time
+				return null; 
 			}
 
 		} catch (SQLException e) {
