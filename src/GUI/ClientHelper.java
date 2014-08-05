@@ -39,6 +39,7 @@ public class ClientHelper {
 		if (userParams == null) {
 			startClientGUI();
 		} else {
+			
 			setUserParams();
 			ConnectClientServer.processUpdateFromServer();
 			ClientUpdateRunnable.checkToSendQ();

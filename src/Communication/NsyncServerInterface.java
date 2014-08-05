@@ -1,16 +1,17 @@
 package Communication;
-
+import Controller.LeaseParams;
+import Controller.SendObject;
 import java.rmi.*;
+
 import java.sql.Timestamp;
 
-import Controller.SendObject;
-
-
-public interface NsyncServerInterface extends Remote {
-
-    public boolean getPermission(SendObject s) throws RemoteException;
+public interface NsyncServerInterface extends Remote {      
+	 
+    public LeaseParams getPermission(SendObject s) throws RemoteException;
     
-    public SendObject serverDBUpdate(SendObject s, String queueName) throws RemoteException;
+    public boolean getPermissionForServers(String username) throws RemoteException;
+    
+    public SendObject serverDBUpdate(SendObject s, String queuename, LeaseParams p ) throws RemoteException;
     
     public void serverToClientSync(Timestamp lastTS, String qName) throws RemoteException;
     
@@ -28,3 +29,4 @@ public interface NsyncServerInterface extends Remote {
     
     public String getGeneratedPassword(String password) throws RemoteException;
 }
+

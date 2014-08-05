@@ -3,6 +3,7 @@ package Communication;
 import java.awt.TrayIcon;
 import java.rmi.RemoteException;
 
+import Controller.LeaseParams;
 import Controller.NSyncClient;
 import Controller.SendObject;
 import Controller.UserProperties;
@@ -21,18 +22,27 @@ public class ClientUpdateRunnable {
 					if (CommunicationManager.connectToServer()) {
 						System.out.println("Server is up");
 						SendObject s = null;
+						LeaseParams lp = null;
 						try {
 							s = NSyncClient.toSendQ.take();
 							System.out.println("Just took something from the queue "
 									+ QueueManager.convertSendObjectToString(s));
+							
 							while (true) {
 								try {
-									CommunicationManager.server
+									lp = CommunicationManager.server
 											.getPermission(s);
-									break;
+									System.out.println("Lease is " + lp.isLeaseGranted() + lp.getServer1Lease());
+									if (lp.isLeaseGranted()) {
+										
+										break;
+									} else {
+										continue;
+									}
 								} catch (Exception e) {
 									System.out
 											.println("Permission not granted");
+									e.printStackTrace();
 									Thread.sleep(5000);
 									continue;
 
@@ -40,7 +50,7 @@ public class ClientUpdateRunnable {
 							}
 							SendObject r = CommunicationManager.server
 									.serverDBUpdate(s,
-											UserProperties.getQueueName());
+											UserProperties.getQueueName(), lp);
 							// if (r.isEnteredIntoDB()) {
 							String fullPath = UserProperties.getDirectory()
 									+ pathParser(r.getFilePath())
@@ -54,7 +64,7 @@ public class ClientUpdateRunnable {
 								System.out
 										.println("\nCalling the upload blob on "
 												+ fullPath + " \n");
-								BlobManager.uploadFileAsBlob(fullPath);
+								BlobManager.uploadFileAsBlob(fullPath, getLeaseID(lp));
 							} else if (r.getEvent().equals(
 									SendObject.EventType.Delete)) {
 								System.out
@@ -95,6 +105,17 @@ public class ClientUpdateRunnable {
 			return "";
 		} else {
 			return path + "/";
+		}
+	}
+	
+	private static String getLeaseID(LeaseParams p) {
+		System.out.println("CommunicationManager: The server connected to is " + p.serverId);
+		if(p.serverId == 1) {
+			return p.getServer1Lease();
+		} else if(p.serverId == 2) {
+			return p.getServer2Lease();
+		} else {
+			return p.getServer3Lease();
 		}
 	}
 

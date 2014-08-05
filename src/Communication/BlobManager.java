@@ -10,6 +10,7 @@ import com.microsoft.azure.storage.blob.CloudBlobClient;
 import com.microsoft.azure.storage.blob.CloudBlobContainer;
 import com.microsoft.azure.storage.blob.CloudBlockBlob;
 import com.microsoft.azure.storage.blob.LeaseState;
+import com.microsoft.azure.storage.blob.LeaseStatus;
 import com.microsoft.azure.storage.blob.ListBlobItem;
 import com.microsoft.windowsazure.services.blob.models.AccessCondition;
 
@@ -57,7 +58,7 @@ public class BlobManager {
 		}
 	}
 
-	public static void uploadFileAsBlob(String fullPath) {
+	public static void uploadFileAsBlob(String fullPath, String leaseId) {
 
 		FileInputStream fis = null;
 		CloudBlockBlob blob = null;
@@ -69,9 +70,17 @@ public class BlobManager {
 					.getContainerReference(containerName);
 			blob = container.getBlockBlobReference(FileFunctions
 					.getRelativePath(fullPath));
+
 			if (blob.exists()) {
 				blob.downloadAttributes();
+				if (blob.getProperties().getLeaseStatus()
+						.equals(LeaseStatus.LOCKED)) {
+					AccessCondition a = AccessCondition
+							.generateLeaseCondition(leaseId);
+					blob.breakLease((0, a, null, null); //   .breakLease(0, a, null, null);
+				}
 			}
+
 			File source = new File(fullPath);
 			if (source.exists()) {
 				fis = new FileInputStream(source);
