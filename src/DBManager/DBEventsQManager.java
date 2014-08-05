@@ -54,7 +54,7 @@ public class DBEventsQManager extends DBManagerLocal implements Runnable{
 			String userID = obj.getUserID();
 			String new_file_name;
 			EventType event = obj.getEvent();
-			String string_event = obj.getEvent().toString();
+			String string_event = obj.getEvent().toString().toUpperCase();
 			String new_state = "";
 		
 	
