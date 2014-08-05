@@ -68,6 +68,7 @@ public class ClientUpdateRunnable {
 												+ fullPath + " \n");
 								// BlobManager.renameBlob(
 							}
+							NSyncClient.sentQ.put(s);
 
 						} catch (InterruptedException e) {
 							e.printStackTrace();
