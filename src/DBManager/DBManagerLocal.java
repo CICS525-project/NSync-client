@@ -220,7 +220,6 @@ public class DBManagerLocal {
 	}
 	public static java.sql.Timestamp getLastTimeStamp() {
 		Connection con = getConnection();
-		String file_id = "";
 		java.sql.Timestamp last_update = null;
 		ResultSet rs = null;
 
@@ -243,7 +242,7 @@ public class DBManagerLocal {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
+		System.out.println("**DB:SyncManager: getLastTimestamp()***********************************"+last_update);
 		return last_update;
 	}
 
