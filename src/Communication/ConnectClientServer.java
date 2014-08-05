@@ -9,6 +9,7 @@ import java.rmi.RemoteException;
 import Controller.SendObject;
 import Controller.UserProperties;
 import DBManager.DBManagerLocal;
+import DBManager.DBSyncManager;
 import GUI.TrayIconBasic;
 
 public class ConnectClientServer {
@@ -70,8 +71,7 @@ public class ConnectClientServer {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							BlobManager.downloadBlob(d.getFilePath() + "/"
-									+ d.getFileName());
+							LocalFileManager.download(d);							
 							TrayIconBasic.displayMessage(
 									"Conflict found on " + d.getFilePath()
 											+ "/" + d.getFileName(),
@@ -81,7 +81,9 @@ public class ConnectClientServer {
 											+ d.getFileName()
 											+ " has been created in the location of the conflict",
 									TrayIcon.MessageType.WARNING);
+							DBSyncManager.processObjFromServer(d);
 						} else {
+							DBSyncManager.processObjFromServer(d);
 							processMessageFromQueue(d);						
 						}
 						// call to dbManager to update the SendObject missing

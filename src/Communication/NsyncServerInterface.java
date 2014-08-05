@@ -6,7 +6,7 @@ import java.util.Date;
 
 public interface NsyncServerInterface extends Remote {
 
-    public boolean getPermission(String username) throws RemoteException;
+    public boolean getPermission(SendObject s) throws RemoteException;
     
     public SendObject serverDBUpdate(SendObject s) throws RemoteException;
     

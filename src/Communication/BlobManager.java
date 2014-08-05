@@ -10,6 +10,7 @@ import com.microsoft.azure.storage.blob.CloudBlobClient;
 import com.microsoft.azure.storage.blob.CloudBlobContainer;
 import com.microsoft.azure.storage.blob.CloudBlockBlob;
 import com.microsoft.azure.storage.blob.ListBlobItem;
+import com.microsoft.windowsazure.services.blob.models.AccessCondition;
 
 import Controller.FileFunctions;
 import Controller.UserProperties;
@@ -23,13 +24,14 @@ import java.security.InvalidKeyException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class BlobManager {
 	// add the username to this string instead of default
 
-	private static String containerName = UserProperties.getUsername().trim();
+	private static String containerName = "yanki";// UserProperties.getUsername().trim();
 	private static String url = CommunicationManager.getURL() + containerName
 			+ "/";
 
@@ -57,13 +59,14 @@ public class BlobManager {
 	public static void uploadFileAsBlob(String fullPath) {
 
 		FileInputStream fis = null;
+		CloudBlockBlob blob = null;
 		try {
 			CloudStorageAccount storageAccount = CloudStorageAccount
 					.parse(CommunicationManager.getStorageConnectionString());
 			CloudBlobClient blobClient = storageAccount.createCloudBlobClient();
 			CloudBlobContainer container = blobClient
 					.getContainerReference(containerName);
-			CloudBlockBlob blob = container.getBlockBlobReference(FileFunctions
+			blob = container.getBlockBlobReference(FileFunctions
 					.getRelativePath(fullPath));
 			File source = new File(fullPath);
 			if (source.exists()) {
@@ -79,6 +82,7 @@ public class BlobManager {
 					blob.upload(fis, source.length());
 				}
 				fis.close();
+				blob.breakLease(0);
 			}
 		} catch (URISyntaxException | InvalidKeyException | StorageException
 				| IOException ex) {
@@ -87,7 +91,8 @@ public class BlobManager {
 			if (fis != null) {
 				try {
 					fis.close();
-				} catch (IOException e) {
+					blob.breakLease(0);
+				} catch (IOException | StorageException e) {
 					e.printStackTrace();
 				}
 			}
@@ -115,9 +120,9 @@ public class BlobManager {
 					.of(BlobListingDetails.METADATA);
 			for (ListBlobItem blobItem : container.listBlobs(startsWith, true,
 					details, null, null)) {
-			//	System.out.println(blobItem.getUri().toString()
-			//			.substring(url.length() - 1));
-				//CloudBlob b = (CloudBlob) blobItem;
+				// System.out.println(blobItem.getUri().toString()
+				// .substring(url.length() - 1));
+				// CloudBlob b = (CloudBlob) blobItem;
 				// b.acquireLease(60, "dddddddddddddddddddddddddddddddd");
 				list.add(blobItem.getUri().toString().substring(url.length()));
 			}
@@ -192,25 +197,34 @@ public class BlobManager {
 		String filePath = UserProperties.getDirectory();
 		String blobUri = fullPath.substring(filePath.length());
 		System.out.println("The blob uri is " + blobUri);
+		CloudBlob blob = null;
 		try {
 			CloudStorageAccount storageAccount = CloudStorageAccount
 					.parse(CommunicationManager.getStorageConnectionString());
 			CloudBlobClient blobClient = storageAccount.createCloudBlobClient();
 			CloudBlobContainer container = blobClient
 					.getContainerReference(containerName);
-			CloudBlob blob = container.getBlockBlobReference(blobUri);
+			blob = container.getBlockBlobReference(blobUri);
 			blob.downloadAttributes();
-			File yourFile = new File(filePath +  blob.getName());
+			File yourFile = new File(filePath + blob.getName());
 			if (!yourFile.exists()) {
 				yourFile.getParentFile().mkdirs();
 			}
-			FileOutputStream fos = new FileOutputStream(filePath + blob.getName());
+			FileOutputStream fos = new FileOutputStream(filePath
+					+ blob.getName());
 			blob.download(fos);
+			blob.breakLease(0);
 			fos.close();
 		} catch (URISyntaxException | InvalidKeyException | StorageException
 				| IOException ex) {
 			Logger.getLogger(BlobManager.class.getName()).log(Level.SEVERE,
 					null, ex);
+			try {
+				blob.breakLease(0);
+			} catch (StorageException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -276,6 +290,7 @@ public class BlobManager {
 		System.out.println("The oldname is " + oldName);
 		newName = FileFunctions.getRelativePath(newName);
 		System.out.println("The new name is " + newName);
+		CloudBlob oldBlob = null;
 		try {
 			CloudStorageAccount storageAccount = CloudStorageAccount
 					.parse(CommunicationManager.getStorageConnectionString());
@@ -284,37 +299,41 @@ public class BlobManager {
 					.getContainerReference(containerName);
 			System.out.println("The old path is " + url + oldName
 					+ " and the new path is " + url + newName);
-			CloudBlob oldBlob = container.getBlockBlobReference(oldName);
+			oldBlob = container.getBlockBlobReference(oldName);
 			CloudBlob newBlob = container.getBlockBlobReference(newName);
-			/*	File f = null;
-			if (!newBlob.exists()) {				
-				String path = System.getProperty("user.home") + "\\Desktop"
-						+ "\\p.txt";
-				System.out.println("The path is " + path);
-				f = new File(path);
-				if (!f.exists()) {
-					f.createNewFile();
-				}
-				newBlob.uploadFromFile(path);
-			} */
-			//newBlob.startCopyFromBlob(oldBlob);
-			//oldBlob.delete();
-			//f.delete();
-			
-			String path = System.getProperty("user.dir").replaceAll("\\", "/") + "/" + oldBlob.getName();
-            File f = new File(path);
-            if (!f.exists()) {
-                f.createNewFile();
-            }
-            oldBlob.downloadToFile(path);
-            newBlob.uploadFromFile(path);//.startCopyFromBlob(oldBlob);
-            oldBlob.delete();
-            f.delete();
-			
+			/*
+			 * File f = null; if (!newBlob.exists()) { String path =
+			 * System.getProperty("user.home") + "\\Desktop" + "\\p.txt";
+			 * System.out.println("The path is " + path); f = new File(path); if
+			 * (!f.exists()) { f.createNewFile(); }
+			 * newBlob.uploadFromFile(path); }
+			 */
+			// newBlob.startCopyFromBlob(oldBlob);
+			// oldBlob.delete();
+			// f.delete();
+
+			String path = System.getProperty("user.dir").replaceAll("\\", "/")
+					+ "/" + oldBlob.getName();
+			File f = new File(path);
+			if (!f.exists()) {
+				f.createNewFile();
+			}
+			oldBlob.downloadToFile(path);
+			newBlob.uploadFromFile(path);// .startCopyFromBlob(oldBlob);
+			oldBlob.breakLease(0);
+			oldBlob.delete();
+			f.delete();
+
 		} catch (URISyntaxException | InvalidKeyException | StorageException
 				| IOException ex) {
 			Logger.getLogger(BlobManager.class.getName()).log(Level.SEVERE,
 					null, ex);
+			try {
+				oldBlob.breakLease(0);
+			} catch (StorageException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -323,6 +342,7 @@ public class BlobManager {
 		System.out.println("The oldname is " + oldName);
 		newName = FileFunctions.getRelativePath(newName);
 		System.out.println("The new name is " + newName);
+		CloudBlob oldBlob = null;
 		try {
 			CloudStorageAccount storageAccount = CloudStorageAccount
 					.parse(CommunicationManager.getStorageConnectionString());
@@ -338,41 +358,85 @@ public class BlobManager {
 				String nName = newName + oName.substring(oldName.length());
 				System.out.println("New name is " + nName);
 				CloudBlob newBlob = container.getBlockBlobReference(nName);
-				CloudBlob oldBlob = container.getBlockBlobReference(oName);
+				oldBlob = container.getBlockBlobReference(oName);
 				System.out.println("The blob names are " + blob.getName());
-				//System.out.println("The copy status is " + blob.getCopyState());
-				//newBlob.startCopyFromBlob(oldBlob);
-				//oldBlob.delete();
-				String path = System.getProperty("user.dir").replaceAll("\\", "/") + "/" + oldBlob.getName();
-	            File f = new File(path);
-	            if (!f.exists()) {
-	                f.createNewFile();
-	            }
-	            oldBlob.downloadToFile(path);
-	            newBlob.uploadFromFile(path);//.startCopyFromBlob(oldBlob);
-	            oldBlob.delete();
-	            f.delete();
-				
+				// System.out.println("The copy status is " +
+				// blob.getCopyState());
+				// newBlob.startCopyFromBlob(oldBlob);
+				// oldBlob.delete();
+				String path = System.getProperty("user.dir").replaceAll("\\",
+						"/")
+						+ "/" + oldBlob.getName();
+				File f = new File(path);
+				if (!f.exists()) {
+					f.createNewFile();
+				}
+				oldBlob.downloadToFile(path);
+				newBlob.uploadFromFile(path);// .startCopyFromBlob(oldBlob);
+				oldBlob.breakLease(0);
+				oldBlob.delete();
+				f.delete();
+
 			}
 		} catch (URISyntaxException | InvalidKeyException | StorageException ex) {
 			Logger.getLogger(BlobManager.class.getName()).log(Level.SEVERE,
 					null, ex);
 			System.out.println("The message of the exception is "
 					+ ex.getMessage());
+			try {
+				oldBlob.breakLease(0);
+			} catch (StorageException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	/*public static void main(String[] args) {
-		//System.out.println(CommunicationManager.serverId);
-		// BlobManager.uploadFileAsBlob("C:\\Users\\welcome\\NSync\\ti34\\group5.txt");
-		//BlobManager.renameBlob("C:\\Users\\welcome\\NSync\\ti34\\group10.txt","C:\\Users\\welcome\\NSync\\ti34\\group5.txt");
-		// BlobManager.uploadFileAsBlob("C:\\Watcher\\myname2\\hithere.txt");
-		// BlobManager.uploadFileAsBlob("C:\\Watcher\\myname2\\pp.txt");
-		// BlobManager.getBlobsList("fish");
-		// BlobManager.downloadAllBlobs();
-		// CloudBlob blob = (CloudBlob) blobItem;
-	} */
+	public static String acquireLease(String blobName, String containerName,
+			int serverId) {
+		CloudBlob b = null;
+		try {
+			CloudStorageAccount storageAccount = CloudStorageAccount
+					.parse(CommunicationManager
+							.getStorageConnectionString(serverId));
+
+			CloudBlobClient blobClient = storageAccount.createCloudBlobClient();
+			CloudBlobContainer container = blobClient
+					.getContainerReference(containerName);
+			b = container.getBlockBlobReference(blobName);
+
+			if (b.exists()) {
+				String leaseID = b.acquireLease(null, generateLeaseId());
+				// b.breakLease(0);
+				return leaseID;
+			} else {
+				return "BlobDoesNotExist";
+			}
+		} catch (URISyntaxException | InvalidKeyException | StorageException ex) {
+			ex.printStackTrace();
+			try {
+				b.breakLease(0);
+			} catch (StorageException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
+		}
+	}
+
+	private static String generateLeaseId() {
+		String uuid = UUID.randomUUID().toString();
+		// System.out.println("uuid = " + uuid);
+		return uuid;
+	}
+	public static void main(String[] args) {
+		String l = acquireLease("ali.JPG", "yanki", 2);
+		System.out.println("Lease is " + l);
+
+	} 
 }
