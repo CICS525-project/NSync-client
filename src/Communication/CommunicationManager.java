@@ -229,6 +229,7 @@ public class CommunicationManager {
 						"Your watched directory is at "
 								+ UserProperties.getDirectory(),
 						TrayIcon.MessageType.INFO);
+				System.out.println("From CommunicationManager, DBSyncManager.getLastTimeStamp() is printing" + DBSyncManager.getLastTimeStamp());
 				CommunicationManager.server.serverToClientSync(DBSyncManager.getLastTimeStamp(), queuename);
 
 				return true;
