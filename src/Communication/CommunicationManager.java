@@ -222,11 +222,7 @@ public class CommunicationManager {
 
 				if (!dir.exists()) {
 					dir.mkdir();
-				} else {
-					dir.delete();
-					dir.mkdir();
-				}
-
+				} 
 				TrayIconBasic.displayMessage(
 						"Alert",
 						"Your watched directory is at "

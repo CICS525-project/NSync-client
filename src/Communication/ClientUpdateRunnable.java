@@ -28,51 +28,53 @@ public class ClientUpdateRunnable {
 							while (true) {
 								try {
 									CommunicationManager.server
-										.getPermission(s);
+											.getPermission(s);
 									break;
 								} catch (Exception e) {
-									System.out.println("Permission not granted");
+									System.out
+											.println("Permission not granted");
 									Thread.sleep(5000);
 									continue;
-									
-								}}
-									SendObject r = CommunicationManager.server
-											.serverDBUpdate(s, UserProperties.getQueueName());
-									// if (r.isEnteredIntoDB()) {
-									String fullPath = UserProperties
-											.getDirectory()
-											+ pathParser(r.getFilePath())
-											+ r.getFileName();
-									System.out.println("\nSend object is "
-											+ r.getEvent().toString() + " \n");
-									if (r.getEvent().equals(
-											SendObject.EventType.Create)
-											|| r.getEvent()
-													.equals(SendObject.EventType.Modify)) {
-										System.out
-												.println("\nCalling the upload blob on "
-														+ fullPath + " \n");
-										BlobManager.uploadFileAsBlob(fullPath);
-									} else if (r.getEvent().equals(
-											SendObject.EventType.Delete)) {
-										System.out
-												.println("\nCalling the blob delete on "
-														+ fullPath + " \n");
-										// BlobManager.deleteBlob(fullPath);
-									} else if (r.getEvent().equals(
-											SendObject.EventType.Rename)) {
-										System.out
-												.println("\nCalling the blob rename on "
-														+ fullPath + " \n");
-										// BlobManager.renameBlob(
-									}								
-							
+
+								}
+							}
+							SendObject r = CommunicationManager.server
+									.serverDBUpdate(s,
+											UserProperties.getQueueName());
+							// if (r.isEnteredIntoDB()) {
+							String fullPath = UserProperties.getDirectory()
+									+ pathParser(r.getFilePath())
+									+ r.getFileName();
+							System.out.println("\nSend object is "
+									+ r.getEvent().toString() + " \n");
+							if (r.getEvent()
+									.equals(SendObject.EventType.Create)
+									|| r.getEvent().equals(
+											SendObject.EventType.Modify)) {
+								System.out
+										.println("\nCalling the upload blob on "
+												+ fullPath + " \n");
+								BlobManager.uploadFileAsBlob(fullPath);
+							} else if (r.getEvent().equals(
+									SendObject.EventType.Delete)) {
+								System.out
+										.println("\nCalling the blob delete on "
+												+ fullPath + " \n");
+								// BlobManager.deleteBlob(fullPath);
+							} else if (r.getEvent().equals(
+									SendObject.EventType.Rename)) {
+								System.out
+										.println("\nCalling the blob rename on "
+												+ fullPath + " \n");
+								// BlobManager.renameBlob(
+							}
+
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						} catch (RemoteException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
-						} 
+						}
 					} else {
 						TrayIconBasic
 								.displayMessage(
