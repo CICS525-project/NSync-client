@@ -259,8 +259,8 @@ public class CommunicationManager {
 				}
 				ClientHelper.writeUserParamsToFile(username, password,
 						queuename);
-				TrayIconBasic.displayMessage("Alert", "Account Verified",
-						TrayIcon.MessageType.INFO);
+				//TrayIconBasic.displayMessage("Alert", "Account Verified",
+				//		TrayIcon.MessageType.INFO);
 				return true;
 			}
 		} catch (RemoteException e) {

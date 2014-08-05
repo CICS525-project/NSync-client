@@ -28,8 +28,13 @@ public class ConnectClientServer {
 					try {
 						if (!CommunicationManager.server.maintainQueue(queue)) {
 							// run sync method
-							CommunicationManager.verifyUser(UserProperties.getUsername(), UserProperties.getPassword(), UserProperties.getQueueName());
-							 CommunicationManager.server.serverToClientSync(DBManagerLocal.getLastTimeStamp(), UserProperties.getQueueName());
+							CommunicationManager.verifyUser(
+									UserProperties.getUsername(),
+									UserProperties.getPassword(),
+									UserProperties.getQueueName());
+							CommunicationManager.server.serverToClientSync(
+									DBManagerLocal.getLastTimeStamp(),
+									UserProperties.getQueueName());
 						}
 					} catch (RemoteException e1) {
 						// could be because server is down or because the client
@@ -41,7 +46,9 @@ public class ConnectClientServer {
 							if (InetAddress.getByName("google.com")
 									.isReachable(3000)) {
 								CommunicationManager.connectToServer();
-								// run sync method on new server connected to
+								CommunicationManager.server.serverToClientSync(
+										DBManagerLocal.getLastTimeStamp(),
+										UserProperties.getQueueName());
 							} else {
 								// run offline
 							}
@@ -72,7 +79,7 @@ public class ConnectClientServer {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							LocalFileManager.download(d);							
+							LocalFileManager.download(d);
 							TrayIconBasic.displayMessage(
 									"Conflict found on " + d.getFilePath()
 											+ "/" + d.getFileName(),
@@ -85,7 +92,7 @@ public class ConnectClientServer {
 							DBSyncManager.processObjFromServer(d);
 						} else {
 							DBSyncManager.processObjFromServer(d);
-							processMessageFromQueue(d);						
+							processMessageFromQueue(d);
 						}
 						// call to dbManager to update the SendObject missing
 					}
@@ -106,17 +113,21 @@ public class ConnectClientServer {
 		if (s.getEvent().equals(SendObject.EventType.Create)
 				|| s.getEvent().equals(SendObject.EventType.Modify)) {
 			LocalFileManager.download(s);
-			TrayIconBasic.displayMessage("File Added/Updated", s.getFilePath() + "/" + s.getFileName() + " added", TrayIcon.MessageType.INFO);
+			TrayIconBasic.displayMessage("File Added/Updated", s.getFilePath()
+					+ "/" + s.getFileName() + " added",
+					TrayIcon.MessageType.INFO);
 		}
 
 		if (s.getEvent().equals(SendObject.EventType.Delete)) {
 			LocalFileManager.delete(s);
-			TrayIconBasic.displayMessage("File Deleted", s.getFilePath() + "/" + s.getFileName() + " deleted", TrayIcon.MessageType.INFO);
+			TrayIconBasic.displayMessage("File Deleted", s.getFilePath() + "/"
+					+ s.getFileName() + " deleted", TrayIcon.MessageType.INFO);
 		}
 
 		if (s.getEvent().equals(SendObject.EventType.Rename)) {
 			LocalFileManager.rename(s);
-			TrayIconBasic.displayMessage("File Renamed", s.getFilePath() + "/" + s.getFileName() + " renamed", TrayIcon.MessageType.INFO);
+			TrayIconBasic.displayMessage("File Renamed", s.getFilePath() + "/"
+					+ s.getFileName() + " renamed", TrayIcon.MessageType.INFO);
 		}
 
 	}
