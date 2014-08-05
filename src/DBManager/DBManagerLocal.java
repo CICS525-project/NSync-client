@@ -11,6 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.security.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.math.*;
 import java.nio.file.FileSystems;
 
@@ -118,6 +120,24 @@ public class DBManagerLocal {
 		return new java.sql.Timestamp(d.getTime());
 	}
 
+	public static java.sql.Timestamp getEpochDate() {
+		// java.util.Date today = new java.util.Date();
+		DateFormat dateFormat = new SimpleDateFormat("01/01/1970");
+		Date date = null;
+		try
+		{
+		date = dateFormat.parse("01/01/1970");
+		}
+		catch(Exception e)
+		{
+			//
+		}
+		long time = date.getTime();
+		//java.sql.Timestsamp ep = new java.sql.Timestamp(time);
+		//System.out.println("the epoch time is tttttttttttttttttttttttttttttttttttttt" + getTimeStamp(date));
+		return new java.sql.Timestamp(time);
+		
+	}
 	public static String getCurrentState(String file_id) {
 		Connection con = getConnection();
 		String current_state = "";
@@ -215,8 +235,8 @@ public class DBManagerLocal {
 			}
 			else 
 			{
-				last_update = null; //check last update is not null before sending if its null it means db is 
-									//empty and user is logging on device for first time
+				last_update = getEpochDate(); //check last update is not null before sending if its null it means db is 
+									//empty and user is logging on device for first time so date set to epoch time
 			}
 			
 
