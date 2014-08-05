@@ -2,6 +2,7 @@ package Communication;
 
 import Communication.NsyncServerInterface;
 import Controller.UserProperties;
+import DBManager.DBSyncManager;
 import GUI.ClientGUI;
 import GUI.ClientHelper;
 import GUI.ClientSignUpGUI;
@@ -228,6 +229,7 @@ public class CommunicationManager {
 						"Your watched directory is at "
 								+ UserProperties.getDirectory(),
 						TrayIcon.MessageType.INFO);
+				CommunicationManager.server.serverToClientSync(DBSyncManager.getLastTimeStamp(), queuename);
 
 				return true;
 			}
