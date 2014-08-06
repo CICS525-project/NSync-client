@@ -531,6 +531,7 @@ public class DBManagerLocal {
 			PreparedStatement ps = con.prepareStatement("DELETE FROM  files WHERE file_id = ?");
 			ps.setString(1, file_id);
 			result = ps.executeUpdate();
+			System.out.println("DB Result is ***************************************************"+result);
 
 		} catch (SQLException e) {
 			e.printStackTrace();
