@@ -16,7 +16,9 @@ import com.microsoft.azure.storage.blob.ListBlobItem;
 
 import Controller.FileFunctions;
 import Controller.UserProperties;
+import GUI.TrayIconBasic;
 
+import java.awt.TrayIcon;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -228,23 +230,20 @@ public class BlobManager {
 			if (!yourFile.exists()) {
 				yourFile.getParentFile().mkdirs();
 			}
-			FileOutputStream fos = new FileOutputStream(filePath
-					+ blob.getName());
-			blob.download(fos);
-			if (blob.getProperties().getLeaseState().equals(LeaseState.LEASED)) {
-				blob.breakLease(0);
+			if (blob.exists()) {
+				FileOutputStream fos = new FileOutputStream(filePath
+						+ blob.getName());
+				blob.download(fos);
+				fos.close();
+				TrayIconBasic.displayMessage("File Added/Updated", filePath
+						+ " added", TrayIcon.MessageType.INFO);
+			} else {
+				TrayIconBasic.displayMessage("Error Downloading File", "The file does not exist again", TrayIcon.MessageType.ERROR);
 			}
-			fos.close();
 		} catch (URISyntaxException | InvalidKeyException | StorageException
 				| IOException ex) {
 			Logger.getLogger(BlobManager.class.getName()).log(Level.SEVERE,
 					null, ex);
-			try {
-				blob.breakLease(0);
-			} catch (StorageException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 	}
 

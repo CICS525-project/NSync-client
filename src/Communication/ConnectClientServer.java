@@ -115,10 +115,7 @@ public class ConnectClientServer {
 	private static void processMessageFromQueue(SendObject s) {
 		if (s.getEvent().equals(SendObject.EventType.Create)
 				|| s.getEvent().equals(SendObject.EventType.Modify)) {
-			LocalFileManager.download(s);
-			TrayIconBasic.displayMessage("File Added/Updated", s.getFilePath()
-					+ "/" + s.getFileName() + " added",
-					TrayIcon.MessageType.INFO);
+			LocalFileManager.download(s);			
 		}
 
 		if (s.getEvent().equals(SendObject.EventType.Delete)) {
