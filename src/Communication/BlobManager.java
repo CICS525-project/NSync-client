@@ -65,6 +65,7 @@ public class BlobManager {
 
 		FileInputStream fis = null;
 		CloudBlockBlob blob = null;
+		String blobhash = "";
 		try {
 			CloudStorageAccount storageAccount = CloudStorageAccount
 					.parse(CommunicationManager.getStorageConnectionString());
@@ -82,6 +83,8 @@ public class BlobManager {
 							.generateLeaseCondition(leaseId);
 					blob.breakLease(0, atp, null, null); // .breakLease(0, a,
 															// null, null);
+
+					blobhash = blob.getMetadata().get("hash");
 				}
 			}
 
@@ -94,12 +97,14 @@ public class BlobManager {
 												// + this.newFileName, "MD5");
 				toBeHashed.close();
 
-				HashMap<String, String> meta = new HashMap<String, String>();
-				meta.put("hash", hash);
-				blob.setMetadata(meta);
-				fis = new FileInputStream(new File(fullPath));
-				blob.upload(fis, new File(fullPath).length());
-				fis.close();
+				if (!blobhash.equals(hash)) {
+					HashMap<String, String> meta = new HashMap<String, String>();
+					meta.put("hash", hash);
+					blob.setMetadata(meta);
+					fis = new FileInputStream(new File(fullPath));
+					blob.upload(fis, new File(fullPath).length());
+					fis.close();
+				}
 			}
 
 		} catch (URISyntaxException | InvalidKeyException | StorageException
@@ -219,7 +224,7 @@ public class BlobManager {
 			File yourFile = new File(filePath + blob.getName());
 			if (!yourFile.exists()) {
 				yourFile.getParentFile().mkdirs();
-				yourFile.createNewFile();
+				// yourFile.createNewFile();
 			}
 
 			if (blob.exists() && yourFile.exists()) {
