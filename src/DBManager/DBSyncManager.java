@@ -33,15 +33,16 @@ public class DBSyncManager extends DBManagerLocal{
 				String file_hash = rs.getString("file_hash");
 				String file_state = rs.getString("file_state");
 				java.sql.Timestamp last_local= rs.getTimestamp("last_local_update");
-				Date date = new Date(last_local.getTime());
-				
 				java.sql.Timestamp last_server= rs.getTimestamp("last_server_update");
+				Date date = new Date(last_local.getTime());
 				String user_id = rs.getString("user_id");
+				
+				
 				System.out.println(file_id + "\t" + file_path +
 						"\t" + file_name + "\t" + file_hash +
 						"\t" + file_state + "\t" + last_local + "\t" + last_server + "\t" + user_id);
 				 sobj = new SendObject(file_id, file_name, file_path, toEvent(file_state), date, false, "");
-                 //System.out.println("The object id in the SYNC CLASS &&&&&&&&&&&&&&&---------------------------------"+sobj.getID());
+                
 				if(sobj!=null)
 				{
 					NSyncClient.toSendQ.put(sobj);
@@ -73,7 +74,10 @@ public class DBSyncManager extends DBManagerLocal{
 		if(!obj.isIsAFolder())
 		{		
 
+			if(event.equals(""))
+			{
 			event = findEventfromServer(file_id, file_hash, file_name);
+			}
 			System.out.println("**DBMANAGER: SyncQManager **********************************************************");
 			if(event.equalsIgnoreCase("CREATE"))
 			{
@@ -143,7 +147,10 @@ public class DBSyncManager extends DBManagerLocal{
 
 			obj.setEnteredIntoDB(true);
 			obj.setID(file_id);
+			obj.setEvent(toEvent(event));
+			
 			System.out.println("UPDATED OBJECT FROM SERVER-----------------------------------------------------"+file_id);
+			System.out.println("UPDATED OBJECT FROM SERVER EVENT SET TO -----------------------------------------------------"+event);
 		}
 
 
