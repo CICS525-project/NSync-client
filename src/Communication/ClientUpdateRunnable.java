@@ -27,19 +27,21 @@ public class ClientUpdateRunnable {
 							s = NSyncClient.toSendQ.take();
 							System.out.println("Just took something from the queue "
 									+ QueueManager.convertSendObjectToString(s));
-							
+							int tries = 0;
 							while (true) {
-								int tries = 0;
+								
 								try {
 									lp = CommunicationManager.server
 											.getPermission(s);
 									System.out.println("Lease is " + lp.isLeaseGranted() + lp.getServer1Lease());									
-									if (lp.isLeaseGranted()) {										
+									if (lp.isLeaseGranted()) {	
+										tries = 0;
 										break;
 									} else {
 										tries++;
 										if(tries == 5) {											
 											TrayIconBasic.displayMessage("Error", "Someone else is using the resource you want to use. Please try again later. Your changes where not saved to the server", TrayIcon.MessageType.ERROR);
+											tries = 0;
 											break;
 										}
 										continue;
