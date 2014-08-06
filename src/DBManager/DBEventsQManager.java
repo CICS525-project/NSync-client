@@ -31,7 +31,7 @@ public class DBEventsQManager extends DBManagerLocal implements Runnable{
 				if(outObj!=null && !(outObj.isIsAFolder()))
 				{
 					NSyncClient.toSendQ.put(outObj);
-					System.out.println("INSIDE DB FILE ID IS*********************************************************" + outObj.getID());
+					System.out.println("ADDED TO toSendQ*********************************************************" + outObj.getID());
 				}
 			}
 				catch (InterruptedException e) 
@@ -57,8 +57,27 @@ public class DBEventsQManager extends DBManagerLocal implements Runnable{
 			EventType event = obj.getEvent();
 			String string_event = obj.getEvent().toString().toUpperCase();
 			String new_state = "";
+			boolean ignore_event = false;
+			String check_id="";
+			String check_hash = "";
+			
+			
+			check_id = getrowID(file_path, file_name);
+			check_hash = getFileHash(check_id);
+			
+			 //get id from file_path and filename 
+			//then get hash of that file 
+			//if hash is the same ignore event 
+			if(check_hash.equals(file_hash))
+			{
+				ignore_event = true; 
+				
+			}
 
-	
+	         if(!ignore_event)
+	         {
+			
+			
 				if(event == EventType.Create && !(obj.isIsAFolder()))
 				{
 					if(!isFileInDB(file_path, file_name))
@@ -147,12 +166,18 @@ public class DBEventsQManager extends DBManagerLocal implements Runnable{
 					System.out.println("Deleting file -----------------------------------------------------"+file_id);
 					success = localDelete(file_id);	
 				}
-
-
 				obj.setEnteredIntoDB(true);
 				obj.setID(file_id);
 				return obj;
+
+	         }
+	         else
+	         {
+	        	 return null;
+	         }
+	      
 		}
+		
 	}
 
 
