@@ -176,7 +176,7 @@ public class QueueManager {
 
 	public static void main(String[] args) {
 		// System.out.println(User.getUsername());
-		getListOfQueues("yanki");
+		getListOfQueues("ali");
 		// getQueueLength("democontainer1406268314962");
 		// deque("democontainer1406268314962");
 	}

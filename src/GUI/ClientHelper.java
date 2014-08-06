@@ -38,15 +38,14 @@ public class ClientHelper {
 
 		if (userParams == null) {
 			startClientGUI();
-		} else {
-			
+		} else {			
 			setUserParams();
 			ConnectClientServer.processUpdateFromServer();
 			ClientUpdateRunnable.checkToSendQ();
 		}
 	}
 
-	private static void setUserParams() {
+	public static void setUserParams() {
 		Map<String, String> userParams = null;
 		try {
 			userParams = loggedInBefore();

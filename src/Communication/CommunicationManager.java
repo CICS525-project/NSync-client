@@ -28,7 +28,7 @@ public class CommunicationManager {
 
 	public static int serverPort = 9005;
 
-	public static int serverId = 1;//getRandomServer();
+	public static int serverId = 2;//getRandomServer();
 
 	public static NsyncServerInterface server;
 
@@ -231,7 +231,9 @@ public class CommunicationManager {
 						TrayIcon.MessageType.INFO);
 				System.out.println("From CommunicationManager, DBSyncManager.getLastTimeStamp() is printing" + DBSyncManager.getLastTimeStamp());
 				CommunicationManager.server.serverToClientSync(DBSyncManager.getLastTimeStamp(), queuename);
-
+				ClientHelper.setUserParams();
+				ConnectClientServer.processUpdateFromServer();
+				ClientUpdateRunnable.checkToSendQ();
 				return true;
 			}
 		} catch (RemoteException e) {
