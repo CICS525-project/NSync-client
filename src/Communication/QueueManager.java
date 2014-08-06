@@ -208,7 +208,7 @@ public class QueueManager {
 		if (o.getEvent().toString() != null) {
 			s = o.getFileName() + "___" + o.getNewFileName() + "___"
 					+ o.getFilePath() + "___" + o.getEvent() + "___"
-					+ enteredInDB + "___" + o.getTimeStamp().toString() + "___"
+					+ enteredInDB + "___" + o.getTimeStamp() + "___"
 					+ isAFolder + "___" + hash + "___" + o.getID() + "___"
 					+ o.getUserID();
 		} else {

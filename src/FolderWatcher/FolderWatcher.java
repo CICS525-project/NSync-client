@@ -229,7 +229,7 @@ public class FolderWatcher implements Runnable {
         try {
             attr = Files.readAttributes(Paths.get(absolutePath), BasicFileAttributes.class);
         } catch (IOException ex) {
-            Logger.getLogger(FolderWatcher.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
        /* System.out.println("creationTime: " + attr.creationTime());
         System.out.println("lastAccessTime: " + attr.lastAccessTime());
@@ -249,12 +249,12 @@ public class FolderWatcher implements Runnable {
     }
 
     public static void main(String[] args) {
-        //try {
-           // new FolderWatcher().run();
-            System.out.println(fileLastModified("C:\\Users\\Ali\\NSync\\profile-photo.jpg"));
-        /*} catch (IOException e) {
+        try {
+            new FolderWatcher().run();
+            //System.out.println(fileLastModified("C:\\Users\\Ali\\NSync\\profile-photo.jpg"));
+        } catch (IOException e) {
             System.out.println(e.getMessage());
-        }*/
+        }
     }
 
 }
