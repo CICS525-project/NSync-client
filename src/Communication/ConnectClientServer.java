@@ -35,6 +35,8 @@ public class ConnectClientServer {
 							/*CommunicationManager.server.serverToClientSync(
 									DBManagerLocal.getLastTimeStamp(),
 									UserProperties.getQueueName()); */
+						} else {
+							CommunicationManager.connectToServer();
 						}
 					} catch (RemoteException e1) {
 						// could be because server is down or because the client

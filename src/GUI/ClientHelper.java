@@ -28,6 +28,12 @@ public class ClientHelper {
 		
 		//initiate a communication to the server
 		CommunicationManager.connectToServer();
+		
+		File dir = new File(UserProperties.getDirectory());
+
+		if (!dir.exists()) {
+			dir.mkdir();
+		} 
 
 		// check if the user has successfully logged in before
 		Map<String, String> userParams = null;
