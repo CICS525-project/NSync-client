@@ -83,9 +83,9 @@ public class BlobManager {
 							.generateLeaseCondition(leaseId);
 					blob.breakLease(0, atp, null, null); // .breakLease(0, a,
 															// null, null);
-
-					blobhash = blob.getMetadata().get("hash");
+					
 				}
+				
 			}
 
 			File source = new File(fullPath);
@@ -102,7 +102,8 @@ public class BlobManager {
 					meta.put("hash", hash);
 					blob.setMetadata(meta);
 					fis = new FileInputStream(new File(fullPath));
-					blob.upload(fis, new File(fullPath).length());
+					blob.upload(fis, source.length());//(fis, source.length());
+					blob.uploadMetadata();
 					fis.close();
 				}
 			}
