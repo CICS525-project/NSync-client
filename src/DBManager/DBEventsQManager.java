@@ -5,11 +5,14 @@ import java.util.concurrent.BlockingQueue;
 import Controller.NSyncClient;
 import Controller.SendObject;
 import Controller.SendObject.EventType;
+import java.sql.Timestamp;
 
 public class DBEventsQManager extends DBManagerLocal implements Runnable{
 
 	private static BlockingQueue<SendObject> eventsQ;
 	private static BlockingQueue<SendObject> toSendQ;
+
+    
 	public DBEventsQManager(BlockingQueue<SendObject> events, BlockingQueue<SendObject> toSend)
 	{
 		super();
@@ -64,11 +67,12 @@ public class DBEventsQManager extends DBManagerLocal implements Runnable{
 			
 			check_id = getrowID(file_path, file_name);
 			check_hash = getFileHash(check_id);
+                        java.sql.Timestamp check_TS = getTSfromDB(check_id);
 			
 			 //get id from file_path and filename 
 			//then get hash of that file 
 			//if hash is the same ignore event 
-			if(check_hash.equals(file_hash))
+			if(check_hash.equals(file_hash) && event != EventType.Rename )
 			{
 				ignore_event = true; 
 				System.out.println("**DBMANAGER: EventQManager : Ignoring Event **********************************************************");
@@ -117,7 +121,7 @@ public class DBEventsQManager extends DBManagerLocal implements Runnable{
 					{
 							
 						
-						if(fileHashChanged(file_id, file_hash))
+						if(fileHashChanged(file_id, file_hash) && check_TS.before(last_local_update))
 						{
 							System.out.println("Modifying file local -----------------------------------------------------"+file_id);
 							success = localModify(file_id, file_hash, new_state, last_local_update);
@@ -169,13 +173,14 @@ public class DBEventsQManager extends DBManagerLocal implements Runnable{
 				}
 				obj.setEnteredIntoDB(true);
 				obj.setID(file_id);
-				return obj;
-
+                                if (success != -1){
+                                    return obj;
+                                       
+                                }
 	         }
-	         else
-	         {
+	         
 	        	 return null;
-	         }
+	        
 	      
 		}
 		
