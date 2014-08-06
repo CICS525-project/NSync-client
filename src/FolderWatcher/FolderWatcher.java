@@ -20,12 +20,15 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class FolderWatcher implements Runnable {
 
@@ -220,9 +223,22 @@ public class FolderWatcher implements Runnable {
         return false;
     }
 
-    private Date fileLastModified(String absolutePath) {
-        File file = new File(absolutePath);
-        return new Date(file.lastModified());
+    private static Date fileLastModified(String absolutePath) {
+        //File file = new File(absolutePath);
+        BasicFileAttributes attr = null;
+        try {
+            attr = Files.readAttributes(Paths.get(absolutePath), BasicFileAttributes.class);
+        } catch (IOException ex) {
+            Logger.getLogger(FolderWatcher.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       /* System.out.println("creationTime: " + attr.creationTime());
+        System.out.println("lastAccessTime: " + attr.lastAccessTime());
+        System.out.println("lastModifiedTime: " + attr.lastModifiedTime());*/
+        FileTime creationTime = attr.creationTime();
+        FileTime lastModifiedTime = attr.lastModifiedTime();
+        if(creationTime.compareTo(lastModifiedTime) >= 0)
+            return new Date(creationTime.toMillis());
+        return new Date(lastModifiedTime.toMillis());
     }
 
     private boolean isADirectory(String elementPath) {
@@ -233,11 +249,12 @@ public class FolderWatcher implements Runnable {
     }
 
     public static void main(String[] args) {
-        try {
-            new FolderWatcher().run();
-        } catch (IOException e) {
+        //try {
+           // new FolderWatcher().run();
+            System.out.println(fileLastModified("C:\\Users\\Ali\\NSync\\profile-photo.jpg"));
+        /*} catch (IOException e) {
             System.out.println(e.getMessage());
-        }
+        }*/
     }
 
 }
