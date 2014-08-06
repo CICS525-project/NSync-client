@@ -29,16 +29,22 @@ public class ClientUpdateRunnable {
 									+ QueueManager.convertSendObjectToString(s));
 							
 							while (true) {
+								int tries = 0;
 								try {
 									lp = CommunicationManager.server
 											.getPermission(s);
-									System.out.println("Lease is " + lp.isLeaseGranted() + lp.getServer1Lease());
-									if (lp.isLeaseGranted()) {
-										
+									System.out.println("Lease is " + lp.isLeaseGranted() + lp.getServer1Lease());									
+									if (lp.isLeaseGranted()) {										
 										break;
 									} else {
+										tries++;
+										if(tries == 5) {											
+											TrayIconBasic.displayMessage("Error", "Someone else is using the resource you want to use. Please try again later. Your changes where not saved to the server", TrayIcon.MessageType.ERROR);
+											break;
+										}
 										continue;
 									}
+									
 								} catch (Exception e) {
 									System.out
 											.println("Permission not granted");
