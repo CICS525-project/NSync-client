@@ -779,4 +779,26 @@ public class DBManagerLocal {
 		return what_event;
 	}
 
+        public static java.sql.Timestamp getTSfromDB(String file_id) {
+            Connection con = getConnection();
+		java.sql.Timestamp TS = null;
+
+		try {
+			PreparedStatement ps = con
+					.prepareStatement("SELECT last_local_update FROM files WHERE file_id = ?");
+			ps.setString(1, file_id);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				TS = rs.getTimestamp(1);
+
+			} else {
+				System.out.println("FILE TIMESTAMP FOUND ______________________________________");
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return TS;
+    }
+        
 }
