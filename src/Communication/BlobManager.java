@@ -84,9 +84,18 @@ public class BlobManager {
 															// null, null);
 				}
 			} 
+			
+			
 
 			File source = new File(fullPath);
 			if(source.exists()) {
+				FileInputStream toBeHashed = new FileInputStream(source);
+                String hash = org.apache.commons.codec.digest.DigestUtils.md5Hex(toBeHashed); //getChecksum(NSyncClient.dir.toString() + "\\" + this.filePath + "\\" + this.newFileName, "MD5");
+                toBeHashed.close();
+                
+                HashMap<String, String> meta = new HashMap<String, String>();
+    			meta.put("hash", hash);
+    			blob.setMetadata(meta);				
 				blob.uploadFromFile(fullPath);
 			}
 			
@@ -207,6 +216,7 @@ public class BlobManager {
 			File yourFile = new File(filePath + blob.getName());
 			if (!yourFile.exists()) {
 				yourFile.getParentFile().mkdirs();
+				yourFile.createNewFile();
 			}
 			
 			
@@ -218,9 +228,12 @@ public class BlobManager {
 				FileInputStream toBeHashed = new FileInputStream(filePath + blob.getName());
                 String hash = org.apache.commons.codec.digest.DigestUtils.md5Hex(toBeHashed); //getChecksum(NSyncClient.dir.toString() + "\\" + this.filePath + "\\" + this.newFileName, "MD5");
                 toBeHashed.close();
+                
+                HashMap<String, String> meta = new HashMap<String, String>();
+				meta = blob.getMetadata();
 				
-				
-				if(blob.getProperties().getContentMD5().equals(toBeHashed)) {
+				System.out.println("Hash is " + hash + " blob hash is " + blob.getProperties().getContentMD5());
+				if(meta.get("hash").equals(hash)) {
 					System.out.println("Ignoring download");
 				} else {
 					blob.downloadToFile(filePath + blob.getName());
@@ -228,9 +241,11 @@ public class BlobManager {
 				
 				TrayIconBasic.displayMessage("File Added/Updated", blobUri
 						+ " added", TrayIcon.MessageType.INFO);
-			} else {
-				TrayIconBasic.displayMessage("Error Downloading File", "The file does not exist again", TrayIcon.MessageType.ERROR);
-			}
+			} 
+			
+			
+			
+			
 		} catch (URISyntaxException | InvalidKeyException | StorageException
 				| IOException ex) {
 			Logger.getLogger(BlobManager.class.getName()).log(Level.SEVERE,

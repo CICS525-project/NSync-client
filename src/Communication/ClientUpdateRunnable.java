@@ -60,25 +60,25 @@ public class ClientUpdateRunnable {
 											UserProperties.getQueueName(), lp);
 							// if (r.isEnteredIntoDB()) {
 							String fullPath = UserProperties.getDirectory()
-									+ pathParser(r.getFilePath())
-									+ r.getFileName();
+									+ pathParser(s.getFilePath())
+									+ s.getFileName();
 							System.out.println("\nSend object is "
-									+ r.getEvent().toString() + " \n");
-							if (r.getEvent()
+									+ s.getEvent().toString() + " \n");
+							if (s.getEvent()
 									.equals(SendObject.EventType.Create)
-									|| r.getEvent().equals(
+									|| s.getEvent().equals(
 											SendObject.EventType.Modify)) {
 								System.out
 										.println("\nCalling the upload blob on "
 												+ fullPath + " \n");
 								BlobManager.uploadFileAsBlob(fullPath, getLeaseID(lp));
-							} else if (r.getEvent().equals(
+							} else if (s.getEvent().equals(
 									SendObject.EventType.Delete)) {
 								System.out
 										.println("\nCalling the blob delete on "
 												+ fullPath + " \n");
 								// BlobManager.deleteBlob(fullPath);
-							} else if (r.getEvent().equals(
+							} else if (s.getEvent().equals(
 									SendObject.EventType.Rename)) {
 								System.out
 										.println("\nCalling the blob rename on "
