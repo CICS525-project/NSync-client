@@ -32,9 +32,9 @@ public class ConnectClientServer {
 									UserProperties.getUsername(),
 									UserProperties.getPassword(),
 									UserProperties.getQueueName());
-							CommunicationManager.server.serverToClientSync(
+							/*CommunicationManager.server.serverToClientSync(
 									DBManagerLocal.getLastTimeStamp(),
-									UserProperties.getQueueName());
+									UserProperties.getQueueName()); */
 						}
 					} catch (RemoteException e1) {
 						// could be because server is down or because the client
