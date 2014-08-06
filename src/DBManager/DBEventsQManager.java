@@ -71,6 +71,7 @@ public class DBEventsQManager extends DBManagerLocal implements Runnable{
 			if(check_hash.equals(file_hash))
 			{
 				ignore_event = true; 
+				System.out.println("**DBMANAGER: EventQManager : Ignoring Event **********************************************************");
 				
 			}
 
