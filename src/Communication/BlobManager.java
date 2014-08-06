@@ -15,7 +15,6 @@ import com.microsoft.azure.storage.blob.LeaseStatus;
 import com.microsoft.azure.storage.blob.ListBlobItem;
 
 import Controller.FileFunctions;
-import Controller.NSyncClient;
 import Controller.UserProperties;
 import GUI.TrayIconBasic;
 
@@ -256,6 +255,12 @@ public class BlobManager {
 				TrayIconBasic.displayMessage("File Added/Updated", blobUri
 						+ " added", TrayIcon.MessageType.INFO);
 			}
+			
+			if(!yourFile.exists()) {
+				FileOutputStream fos = new FileOutputStream(yourFile);
+				blob.download(fos);
+				fos.close();
+			}			
 
 		} catch (URISyntaxException | InvalidKeyException | StorageException
 				| IOException ex) {
