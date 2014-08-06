@@ -8,11 +8,15 @@ import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.InvalidKeyException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+
+import com.microsoft.azure.storage.StorageException;
  
 public class TrayIconBasic {
 	
@@ -66,7 +70,18 @@ public class TrayIconBasic {
                 // Do some cleanup
                //JOptionPane.showMessageDialog(null, "Coming soon!!!");
             	
-            	new FileChooserDialog();
+            	try {
+					new FileChooserDialog();
+				} catch (InvalidKeyException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (URISyntaxException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (StorageException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
             }
         });
  
