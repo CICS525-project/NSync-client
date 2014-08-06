@@ -65,21 +65,27 @@ public class DBSyncManager extends DBManagerLocal{
 		java.sql.Timestamp last_time_stamp =  getTimeStamp(obj.getTimeStamp());
 		String userID = obj.getUserID();
 		String new_file_name;
-		String string_event = obj.getEvent().toString();
+		Controller.SendObject.EventType event = obj.getEvent();
+		String string_event = "";
 		String new_state = "";
 		String current_file_name = "";
 
-		String event = "";
 
-		if(!obj.isIsAFolder())
-		{		
+		
 
-			if(event.equals(""))
+			if(event==null)
 			{
-			event = findEventfromServer(file_id, file_hash, file_name);
+				string_event = findEventfromServer(file_id, file_hash, file_name);
 			}
+			else
+			{
+				string_event = event.toString();
+			}
+			
+			
+			
 			System.out.println("**DBMANAGER: SyncQManager **********************************************************");
-			if(event.equalsIgnoreCase("CREATE"))
+			if(string_event.equalsIgnoreCase("CREATE") && !(obj.isIsAFolder()))
 			{
 				try
 				{
@@ -98,7 +104,7 @@ public class DBSyncManager extends DBManagerLocal{
 					obj.setID(file_id);
 				}
 			}
-			else if(event.equalsIgnoreCase("MODIFY"))
+			else if(string_event.equalsIgnoreCase("MODIFY") && !(obj.isIsAFolder()))
 			{
 
 
@@ -108,7 +114,7 @@ public class DBSyncManager extends DBManagerLocal{
 
 
 			}
-			else if(event.equalsIgnoreCase("RENAME"))
+			else if(string_event.equalsIgnoreCase("RENAME")&& !(obj.isIsAFolder()))
 			{
 
 				new_state = setNewState(string_event, getCurrentState(file_id));
@@ -119,7 +125,7 @@ public class DBSyncManager extends DBManagerLocal{
 
 			}
 
-			else if(event.equalsIgnoreCase("MODIFYRENAME"))
+			else if(string_event.equalsIgnoreCase("MODIFYRENAME")&& !(obj.isIsAFolder()))
 			{
 
 				new_state = setNewState(string_event, getCurrentState(file_id));
@@ -131,14 +137,14 @@ public class DBSyncManager extends DBManagerLocal{
 
 			}
 			
-			else if(event.equalsIgnoreCase("DELETE"))
+			else if(string_event.equalsIgnoreCase("DELETE")&& !(obj.isIsAFolder()))
 			{
 
 				System.out.println("Deleting file -----------------------------------------------------");
 				success = localRemove(file_id);	
 			}
 
-			else if(event.equalsIgnoreCase("SHARE"))
+			else if(string_event.equalsIgnoreCase("SHARE")&& !(obj.isIsAFolder()))
 			{
 
 				System.out.println("SHARING file FROM SERVER IGNORE -----------------------------------------------------");
@@ -147,14 +153,13 @@ public class DBSyncManager extends DBManagerLocal{
 
 			obj.setEnteredIntoDB(true);
 			obj.setID(file_id);
-			obj.setEvent(toEvent(event));
+			obj.setEvent(toEvent(string_event));
 			
 			System.out.println("UPDATED OBJECT FROM SERVER-----------------------------------------------------"+file_id);
-			System.out.println("UPDATED OBJECT FROM SERVER EVENT SET TO -----------------------------------------------------"+event);
+			System.out.println("UPDATED OBJECT FROM SERVER EVENT SET TO -----------------------------------------------------"+string_event);
 		}
 
 
-	}
 
 	public static EventType toEvent(String str_event)
 	{
