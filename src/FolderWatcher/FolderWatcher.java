@@ -1,5 +1,6 @@
 package FolderWatcher;
 
+import Communication.QueueManager;
 import Controller.FileFunctions;
 import Controller.NSyncClient;
 import Controller.SendObject;
@@ -119,7 +120,8 @@ public class FolderWatcher implements Runnable {
                         fileNamePath1.getFileName().toString());
 
                 eventsQ.add(sendObject);
-                System.out.println("\033[34mSENDOBJECT(Rename) CREATED AND ADDED TO THE QUEUE\n");
+                System.out.println("\033[34mSENDOBJECT( Rename ) CREATED AND ADDED TO THE QUEUE: \n" 
+                            + QueueManager.convertSendObjectToString(sendObject));
             } else {
 
                 for (WatchEvent<?> event : oneElementsEvents) {
@@ -188,7 +190,8 @@ public class FolderWatcher implements Runnable {
                             isADirectory(directory.toString() + "\\" + fileNamePath.getFileName()), null);
 
                     eventsQ.add(sendObject);
-                    System.out.println("\033[34mSENDOBJECT(" + kind.name() + ") CREATED AND ADDED TO THE QUEUE\n");
+                    System.out.println("\033[34mSENDOBJECT(" + kind.name() + ") CREATED AND ADDED TO THE QUEUE: \n" 
+                            + QueueManager.convertSendObjectToString(sendObject));
                     //increasing count
                     count++;
                 }
