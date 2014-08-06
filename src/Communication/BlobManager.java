@@ -83,26 +83,29 @@ public class BlobManager {
 					blob.breakLease(0, atp, null, null); // .breakLease(0, a,
 															// null, null);
 				}
-			} 
-			
-			
+			}
 
 			File source = new File(fullPath);
-			if(source.exists()) {
+			if (source.exists()) {
 				FileInputStream toBeHashed = new FileInputStream(source);
-                String hash = org.apache.commons.codec.digest.DigestUtils.md5Hex(toBeHashed); //getChecksum(NSyncClient.dir.toString() + "\\" + this.filePath + "\\" + this.newFileName, "MD5");
-                toBeHashed.close();
-                
-                HashMap<String, String> meta = new HashMap<String, String>();
-    			meta.put("hash", hash);
-    			blob.setMetadata(meta);				
-				blob.uploadFromFile(fullPath);
+				String hash = org.apache.commons.codec.digest.DigestUtils
+						.md5Hex(toBeHashed); // getChecksum(NSyncClient.dir.toString()
+												// + "\\" + this.filePath + "\\"
+												// + this.newFileName, "MD5");
+				toBeHashed.close();
+
+				HashMap<String, String> meta = new HashMap<String, String>();
+				meta.put("hash", hash);
+				blob.setMetadata(meta);
+				fis = new FileInputStream(new File(fullPath));
+				blob.upload(fis, new File(fullPath).length());
+				fis.close();
 			}
-			
+
 		} catch (URISyntaxException | InvalidKeyException | StorageException
 				| IOException ex) {
 			Logger.getLogger(BlobManager.class.getName()).log(Level.SEVERE,
-					null, ex);			
+					null, ex);
 		} finally {
 			if (fis != null) {
 				try {
@@ -212,40 +215,42 @@ public class BlobManager {
 			CloudBlobContainer container = blobClient
 					.getContainerReference(containerName);
 			blob = container.getBlockBlobReference(blobUri);
-			
+
 			File yourFile = new File(filePath + blob.getName());
 			if (!yourFile.exists()) {
 				yourFile.getParentFile().mkdirs();
 				yourFile.createNewFile();
 			}
-			
-			
-			
+
 			if (blob.exists() && yourFile.exists()) {
 				blob.downloadAttributes();
-				//FileOutputStream fos = new FileOutputStream(filePath
-				//		+ blob.getName());
-				FileInputStream toBeHashed = new FileInputStream(filePath + blob.getName());
-                String hash = org.apache.commons.codec.digest.DigestUtils.md5Hex(toBeHashed); //getChecksum(NSyncClient.dir.toString() + "\\" + this.filePath + "\\" + this.newFileName, "MD5");
-                toBeHashed.close();
-                
-                HashMap<String, String> meta = new HashMap<String, String>();
+				// FileOutputStream fos = new FileOutputStream(filePath
+				// + blob.getName());
+				FileInputStream toBeHashed = new FileInputStream(filePath
+						+ blob.getName());
+				String hash = org.apache.commons.codec.digest.DigestUtils
+						.md5Hex(toBeHashed); // getChecksum(NSyncClient.dir.toString()
+												// + "\\" + this.filePath + "\\"
+												// + this.newFileName, "MD5");
+				toBeHashed.close();
+
+				HashMap<String, String> meta = new HashMap<String, String>();
 				meta = blob.getMetadata();
-				
-				System.out.println("Hash is " + hash + " blob hash is " + blob.getProperties().getContentMD5());
-				if(meta.get("hash").equals(hash)) {
+
+				System.out.println("Hash is " + hash + " blob hash is "
+						+ blob.getProperties().getContentMD5());
+				if (meta.get("hash").equals(hash)) {
 					System.out.println("Ignoring download");
 				} else {
-					blob.downloadToFile(filePath + blob.getName());
-				}	
-				
+					FileOutputStream fos = new FileOutputStream(yourFile);
+					blob.download(fos);
+					fos.close();
+					// blob.downloadToFile(filePath + blob.getName());
+				}
 				TrayIconBasic.displayMessage("File Added/Updated", blobUri
 						+ " added", TrayIcon.MessageType.INFO);
-			} 
-			
-			
-			
-			
+			}
+
 		} catch (URISyntaxException | InvalidKeyException | StorageException
 				| IOException ex) {
 			Logger.getLogger(BlobManager.class.getName()).log(Level.SEVERE,
