@@ -231,11 +231,11 @@ public class BlobManager {
 				yourFile.getParentFile().mkdirs();
 			}
 			if (blob.exists()) {
-				FileOutputStream fos = new FileOutputStream(filePath
-						+ blob.getName());
-				blob.download(fos);
-				fos.close();
-				TrayIconBasic.displayMessage("File Added/Updated", filePath
+				//FileOutputStream fos = new FileOutputStream(filePath
+				//		+ blob.getName());
+				blob.downloadToFile(filePath + blob.getName());//(fos);
+				//fos.close();
+				TrayIconBasic.displayMessage("File Added/Updated", blobUri
 						+ " added", TrayIcon.MessageType.INFO);
 			} else {
 				TrayIconBasic.displayMessage("Error Downloading File", "The file does not exist again", TrayIcon.MessageType.ERROR);
