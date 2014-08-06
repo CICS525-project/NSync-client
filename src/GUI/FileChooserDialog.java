@@ -56,7 +56,8 @@ public class FileChooserDialog {
 					"<p>The files and links are <br />";
 			for (File f : chosenFile) {				
 				System.out.println("<p>The name of the files is " + f.getName());
-				message += "<br /> " + f.getName() + " - " + ShareFiles.shareFiles(UserProperties.getUsername(), f.getName() + "</p>");
+				message += "<br /> " + f.getName() + " - " + ShareFiles.shareFiles(UserProperties.getUsername(), f.getName()) + "</p>";
+				System.out.println("The name of the link is " + ShareFiles.shareFiles(UserProperties.getUsername(), f.getName()));
 			}
 			
 			message += "<p>The links expire after one hour so you need to download them very fast</p>";
