@@ -74,7 +74,7 @@ public class BlobManager {
 			blob = container.getBlockBlobReference(FileFunctions
 					.getRelativePath(fullPath));
 
-			/*if (blob.exists()) {
+			if (blob.exists()) {
 				blob.downloadAttributes();
 				if (blob.getProperties().getLeaseStatus()
 						.equals(LeaseStatus.LOCKED)) {
@@ -83,7 +83,7 @@ public class BlobManager {
 					blob.breakLease(0, atp, null, null); // .breakLease(0, a,
 															// null, null);
 				}
-			} */
+			} 
 
 			File source = new File(fullPath);
 			if(source.exists()) {
