@@ -28,24 +28,30 @@ public class ClientUpdateRunnable {
 									+ QueueManager.convertSendObjectToString(s));
 							int tries = 0;
 							while (true) {
-								
+
 								try {
 									lp = CommunicationManager.server
 											.getPermission(s);
-									System.out.println("Lease is " + lp.isLeaseGranted() + lp.getServer1Lease());									
-									if (lp.isLeaseGranted()) {	
-										//tries = 0;
+									System.out.println("Lease is "
+											+ lp.isLeaseGranted()
+											+ lp.getServer1Lease());
+									if (lp.isLeaseGranted()) {
+										// tries = 0;
 										break;
 									} else {
 										tries++;
-										if(tries == 5) {											
-											TrayIconBasic.displayMessage("Error", "Someone else is using the resource you want to use. Please try again later. Your changes where not saved to the server", TrayIcon.MessageType.ERROR);
+										if (tries == 5) {
+											TrayIconBasic
+													.displayMessage(
+															"Error",
+															"Someone else is using the resource you want to use. Please try again later. Your changes where not saved to the server",
+															TrayIcon.MessageType.ERROR);
 											tries = 0;
 											break;
 										}
 										continue;
 									}
-									
+
 								} catch (Exception e) {
 									System.out
 											.println("Permission not granted");
@@ -55,9 +61,7 @@ public class ClientUpdateRunnable {
 
 								}
 							}
-							SendObject r = CommunicationManager.server
-									.serverDBUpdate(s,
-											UserProperties.getQueueName(), lp);
+
 							// if (r.isEnteredIntoDB()) {
 							String fullPath = UserProperties.getDirectory()
 									+ pathParser(s.getFilePath())
@@ -71,7 +75,8 @@ public class ClientUpdateRunnable {
 								System.out
 										.println("\nCalling the upload blob on "
 												+ fullPath + " \n");
-								BlobManager.uploadFileAsBlob(fullPath, getLeaseID(lp));
+								BlobManager.uploadFileAsBlob(fullPath,
+										getLeaseID(lp));
 							} else if (s.getEvent().equals(
 									SendObject.EventType.Delete)) {
 								System.out
@@ -85,7 +90,9 @@ public class ClientUpdateRunnable {
 												+ fullPath + " \n");
 								// BlobManager.renameBlob(
 							}
-						NSyncClient.sentQ.put(s);
+							CommunicationManager.server.serverDBUpdate(s,
+									UserProperties.getQueueName(), lp);
+							NSyncClient.sentQ.put(s);
 
 						} catch (InterruptedException e) {
 							e.printStackTrace();
@@ -114,12 +121,13 @@ public class ClientUpdateRunnable {
 			return path + "/";
 		}
 	}
-	
+
 	private static String getLeaseID(LeaseParams p) {
-		System.out.println("CommunicationManager: The server connected to is " + p.serverId);
-		if(p.serverId == 1) {
+		System.out.println("CommunicationManager: The server connected to is "
+				+ p.serverId);
+		if (p.serverId == 1) {
 			return p.getServer1Lease();
-		} else if(p.serverId == 2) {
+		} else if (p.serverId == 2) {
 			return p.getServer2Lease();
 		} else {
 			return p.getServer3Lease();

@@ -21,9 +21,7 @@ import com.microsoft.azure.storage.blob.CloudBlobContainer;
 import com.microsoft.azure.storage.blob.SharedAccessBlobPermissions;
 import com.microsoft.azure.storage.blob.SharedAccessBlobPolicy;
 
-public class ShareFiles {
-	
-	  private static final String SharedAccessPermissions = null;
+public class ShareFiles {	 
 
 	public static void main(String[] args) throws InvalidKeyException, 
 	     URISyntaxException, StorageException 
@@ -41,11 +39,7 @@ public class ShareFiles {
 	Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 	//cal.setTimeZone(TimeZone.getTimeZone("UTC"));
 	 
-	// Define the start and end time to grant permissions.
-	// To handle clock skew set start time 5 min early and
-	// expiry time 5 min later. So actual duration to be specified
-	// for SAS is between 1hr 5min and 1hr 35 min from now.
-	//cal.add(Calendar.DST_OFFSET, 7);
+	
 	
 	//cal.setTimeZone(TimeZone.setDefault("UTC");
 	cal.add(Calendar.HOUR, 0);
