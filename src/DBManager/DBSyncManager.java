@@ -151,9 +151,11 @@ public class DBSyncManager extends DBManagerLocal{
 				//DO NOTHING 	
 			}
 
+			localModifyLastServerUpdate(file_id, last_time_stamp);
 			obj.setEnteredIntoDB(true);
 			obj.setID(file_id);
 			obj.setEvent(toEvent(string_event));
+			
 			
 			System.out.println("UPDATED OBJECT FROM SERVER-----------------------------------------------------"+file_id);
 			System.out.println("UPDATED OBJECT FROM SERVER EVENT SET TO -----------------------------------------------------"+string_event);
