@@ -229,7 +229,8 @@ public class FolderWatcher implements Runnable {
         try {
             attr = Files.readAttributes(Paths.get(absolutePath), BasicFileAttributes.class);
         } catch (IOException ex) {
-            return null;
+            File file = new File(absolutePath);
+            return new Date(file.lastModified());
         }
        /* System.out.println("creationTime: " + attr.creationTime());
         System.out.println("lastAccessTime: " + attr.lastAccessTime());
