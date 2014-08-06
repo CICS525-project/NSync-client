@@ -28,7 +28,7 @@ public class FileChooserDialog {
 				UserProperties.getDirectory()));
 		JFileChooser chooser = new JFileChooser("Choose File To Share");
 		chooser.setMultiSelectionEnabled(true);
-		chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		chooser.setApproveButtonText("Share Files");
 		chooser.setFileSystemView(fsv);
 		chooser.setBackground(new Color(248, 248, 255));
@@ -38,7 +38,7 @@ public class FileChooserDialog {
 		if (choice != JFileChooser.APPROVE_OPTION)
 			return;
 		JOptionPane
-				.showInputDialog(jf, "Email addresses should be separated by a comma ", "Enter Email Addreses To Share With", JOptionPane.PLAIN_MESSAGE);
+				.showInputDialog(jf, "Email addresses should be separated by a comma ", "Enter Email Addresses To Share With. All links expire after 1 hour", JOptionPane.PLAIN_MESSAGE);
 		File[] chosenFile = chooser.getSelectedFiles();
 		for (File f : chosenFile) {
 			System.out.println("The name of the files is " + f.getName());
