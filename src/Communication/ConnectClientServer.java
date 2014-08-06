@@ -60,7 +60,9 @@ public class ConnectClientServer {
 
 						e1.printStackTrace();
 					}
-					if (QueueManager.getQueueLength(queue) > 0) {
+					System.out.println("\n checking the queue length if it is >0. " + queue+ " lengthe: "
+                                        + QueueManager.getQueueLength(queue));
+                                        if (QueueManager.getQueueLength(queue) > 0) {
 						// call to DBManager method to resolve conflicts missing
 
 						String message = QueueManager.deque(queue);
@@ -89,11 +91,12 @@ public class ConnectClientServer {
 											+ d.getFileName()
 											+ " has been created in the location of the conflict",
 									TrayIcon.MessageType.WARNING);
+							
+						} 
 							DBSyncManager.processObjFromServer(d);
-						} else {
-							DBSyncManager.processObjFromServer(d);
+                                                        System.out.println("||||||||| "+ d.getEvent().toString());
 							processMessageFromQueue(d);
-						}
+						
 						// call to dbManager to update the SendObject missing
 					}
 
