@@ -51,15 +51,15 @@ public class FileChooserDialog {
 
 		for (String email : emails) {
 			System.out.println("The emails are " + email);
-			String message = "Hello , \n\n" +
-		UserProperties.getUsername() + " has shared the following files with you. \n\n" + 
-					"The filles and links are \n";
+			String message = "<p>Hello , <br /></p>" +
+		UserProperties.getUsername() + " has shared the following files with you. </p>" + 
+					"<p>The files and links are <br />";
 			for (File f : chosenFile) {				
-				System.out.println("The name of the files is " + f.getName());
-				message += "\n " + f.getName() + " - " + ShareFiles.shareFiles(UserProperties.getUsername(), f.getName());
+				System.out.println("<p>The name of the files is " + f.getName());
+				message += "<br /> " + f.getName() + " - " + ShareFiles.shareFiles(UserProperties.getUsername(), f.getName() + "</p>");
 			}
 			
-			message += "\n\nThe links expire after one hour so you need to download them very fast";
+			message += "<p>The links expire after one hour so you need to download them very fast</p>";
 			
 			new SendMail(email, "NSync Files Shared", message);
 		}
