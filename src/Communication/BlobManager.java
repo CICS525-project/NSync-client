@@ -15,6 +15,7 @@ import com.microsoft.azure.storage.blob.LeaseStatus;
 import com.microsoft.azure.storage.blob.ListBlobItem;
 
 import Controller.FileFunctions;
+import Controller.NSyncClient;
 import Controller.UserProperties;
 import GUI.TrayIconBasic;
 
@@ -202,19 +203,29 @@ public class BlobManager {
 			CloudBlobContainer container = blobClient
 					.getContainerReference(containerName);
 			blob = container.getBlockBlobReference(blobUri);
-			blob.downloadAttributes();
+			
 			File yourFile = new File(filePath + blob.getName());
 			if (!yourFile.exists()) {
 				yourFile.getParentFile().mkdirs();
 			}
-			if (blob.exists()) {
+			
+			
+			
+			if (blob.exists() && yourFile.exists()) {
+				blob.downloadAttributes();
 				//FileOutputStream fos = new FileOutputStream(filePath
 				//		+ blob.getName());
+				FileInputStream toBeHashed = new FileInputStream(filePath + blob.getName());
+                String hash = org.apache.commons.codec.digest.DigestUtils.md5Hex(toBeHashed); //getChecksum(NSyncClient.dir.toString() + "\\" + this.filePath + "\\" + this.newFileName, "MD5");
+                toBeHashed.close();
 				
 				
+				if(blob.getProperties().getContentMD5().equals(toBeHashed)) {
+					System.out.println("Ignoring download");
+				} else {
+					blob.downloadToFile(filePath + blob.getName());
+				}	
 				
-				blob.downloadToFile(filePath + blob.getName());//(fos);
-				//fos.close();
 				TrayIconBasic.displayMessage("File Added/Updated", blobUri
 						+ " added", TrayIcon.MessageType.INFO);
 			} else {
