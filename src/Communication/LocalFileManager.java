@@ -22,8 +22,8 @@ public class LocalFileManager {
 		System.out.println("File to be downloaded is "
 				+ pathParser(s.getFilePath()) + s.getFileName());
 		BlobManager.downloadBlob(filePath);
-		//File df = new File(filePath);		
-		//df.setLastModified(s.getTimeStamp().getTime());		
+		File df = new File(filePath);		
+		df.setLastModified(s.getTimeStamp().getTime());		
 	}
 
 	public static void delete(SendObject s) {
