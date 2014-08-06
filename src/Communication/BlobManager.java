@@ -2,6 +2,7 @@ package Communication;
 
 import Communication.CommunicationManager;
 
+import com.microsoft.azure.storage.AccessCondition;
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.blob.BlobListingDetails;
@@ -12,7 +13,6 @@ import com.microsoft.azure.storage.blob.CloudBlockBlob;
 import com.microsoft.azure.storage.blob.LeaseState;
 import com.microsoft.azure.storage.blob.LeaseStatus;
 import com.microsoft.azure.storage.blob.ListBlobItem;
-import com.microsoft.windowsazure.services.blob.models.AccessCondition;
 
 import Controller.FileFunctions;
 import Controller.UserProperties;
@@ -75,9 +75,10 @@ public class BlobManager {
 				blob.downloadAttributes();
 				if (blob.getProperties().getLeaseStatus()
 						.equals(LeaseStatus.LOCKED)) {
-					AccessCondition a = AccessCondition
+					AccessCondition atp = AccessCondition
 							.generateLeaseCondition(leaseId);
-					blob.breakLease((0, a, null, null); //   .breakLease(0, a, null, null);
+					blob.breakLease(0, atp, null, null); // .breakLease(0, a,
+															// null, null);
 				}
 			}
 
@@ -95,8 +96,9 @@ public class BlobManager {
 					blob.upload(fis, source.length());
 				}
 				fis.close();
-				if (blob.exists() && blob.getProperties().getLeaseState()
-						.equals(LeaseState.LEASED)) {
+				if (blob.exists()
+						&& blob.getProperties().getLeaseState()
+								.equals(LeaseState.LEASED)) {
 					blob.breakLease(0);
 				}
 			}
@@ -425,8 +427,7 @@ public class BlobManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}	
-	
+	}
 
 	private static String generateLeaseId() {
 		String uuid = UUID.randomUUID().toString();
@@ -434,5 +435,4 @@ public class BlobManager {
 		return uuid;
 	}
 
-	
 }
