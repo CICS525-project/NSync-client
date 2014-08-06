@@ -26,6 +26,7 @@ public class ClientHelper {
 		// start the tray icon
 		new TrayIconBasic();
 		
+		//initiate a communication to the server
 		CommunicationManager.connectToServer();
 
 		// check if the user has successfully logged in before
