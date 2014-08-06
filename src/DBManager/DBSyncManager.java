@@ -54,7 +54,7 @@ public class DBSyncManager extends DBManagerLocal{
 
 	}
 
-	public static void processObjFromServer(SendObject obj) // process queue in events queue class
+	public static SendObject processObjFromServer(SendObject obj) // process queue in events queue class
 	{
 		String file_id = obj.getID();
 		int success = -1;
@@ -157,7 +157,8 @@ public class DBSyncManager extends DBManagerLocal{
 			
 			System.out.println("UPDATED OBJECT FROM SERVER-----------------------------------------------------"+file_id);
 			System.out.println("UPDATED OBJECT FROM SERVER EVENT SET TO -----------------------------------------------------"+string_event);
-		}
+	return obj;	
+	}
 
 
 

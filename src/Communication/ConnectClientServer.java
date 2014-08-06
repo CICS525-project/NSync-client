@@ -81,7 +81,7 @@ public class ConnectClientServer {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							LocalFileManager.download(d);
+							//LocalFileManager.download(d);
 							TrayIconBasic.displayMessage(
 									"Conflict found on " + d.getFilePath()
 											+ "/" + d.getFileName(),
@@ -93,7 +93,7 @@ public class ConnectClientServer {
 									TrayIcon.MessageType.WARNING);
 							
 						} 
-							DBSyncManager.processObjFromServer(d);
+							d = DBSyncManager.processObjFromServer(d);
                                                         System.out.println("||||||||| "+ d.getEvent().toString());
 							processMessageFromQueue(d);
 						

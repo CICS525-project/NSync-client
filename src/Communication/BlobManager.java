@@ -73,7 +73,7 @@ public class BlobManager {
 			blob = container.getBlockBlobReference(FileFunctions
 					.getRelativePath(fullPath));
 
-			if (blob.exists()) {
+			/*if (blob.exists()) {
 				blob.downloadAttributes();
 				if (blob.getProperties().getLeaseStatus()
 						.equals(LeaseStatus.LOCKED)) {
@@ -82,40 +82,17 @@ public class BlobManager {
 					blob.breakLease(0, atp, null, null); // .breakLease(0, a,
 															// null, null);
 				}
-			}
+			} */
 
 			File source = new File(fullPath);
-			if (source.exists()) {
-				fis = new FileInputStream(source);
-				HashMap<String, String> meta = new HashMap<String, String>();
-				meta.put("dateModified", FileFunctions
-						.convertTimeToUTC(FileFunctions
-								.convertTimestampToDate(source.lastModified())));
-				blob.setMetadata(meta);
-				if (!source.isHidden()) {
-					System.out.println(source.getName()
-							+ " is not up to date so it is uploaded");
-					blob.upload(fis, source.length());
-				}
-				fis.close();
-				if (blob.exists()
-						&& blob.getProperties().getLeaseState()
-								.equals(LeaseState.LEASED)) {
-					blob.breakLease(0);
-				}
+			if(source.exists()) {
+				blob.uploadFromFile(fullPath);
 			}
+			
 		} catch (URISyntaxException | InvalidKeyException | StorageException
 				| IOException ex) {
 			Logger.getLogger(BlobManager.class.getName()).log(Level.SEVERE,
-					null, ex);
-			if (fis != null) {
-				try {
-					fis.close();
-					blob.breakLease(0);
-				} catch (IOException | StorageException e) {
-					e.printStackTrace();
-				}
-			}
+					null, ex);			
 		} finally {
 			if (fis != null) {
 				try {
@@ -233,6 +210,9 @@ public class BlobManager {
 			if (blob.exists()) {
 				//FileOutputStream fos = new FileOutputStream(filePath
 				//		+ blob.getName());
+				
+				
+				
 				blob.downloadToFile(filePath + blob.getName());//(fos);
 				//fos.close();
 				TrayIconBasic.displayMessage("File Added/Updated", blobUri

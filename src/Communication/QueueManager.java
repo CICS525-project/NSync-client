@@ -176,8 +176,18 @@ public class QueueManager {
 
 	public static void main(String[] args) {
 		// System.out.println(User.getUsername());
-		getListOfQueues("ali");
-		// getQueueLength("democontainer1406268314962");
+		/*for(CloudQueue c:getListOfQueues("ali")) {
+			try {
+				c.delete();
+			} catch (StorageException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} */
+		//QueueManager.deleteQueue("filevents");
+		// getQueueLength("filevents");
+		//createQueue("filevents");
+		deleteQueue("filevents");
 		// deque("democontainer1406268314962");
 	}
 

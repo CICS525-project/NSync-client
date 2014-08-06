@@ -18,7 +18,6 @@ public class ClientUpdateRunnable {
 			@Override
 			public void run() {
 				while (true) {
-
 					if (CommunicationManager.connectToServer()) {
 						System.out.println("Server is up");
 						SendObject s = null;
@@ -35,7 +34,7 @@ public class ClientUpdateRunnable {
 											.getPermission(s);
 									System.out.println("Lease is " + lp.isLeaseGranted() + lp.getServer1Lease());									
 									if (lp.isLeaseGranted()) {	
-										tries = 0;
+										//tries = 0;
 										break;
 									} else {
 										tries++;
@@ -86,7 +85,7 @@ public class ClientUpdateRunnable {
 												+ fullPath + " \n");
 								// BlobManager.renameBlob(
 							}
-							NSyncClient.sentQ.put(s);
+						NSyncClient.sentQ.put(s);
 
 						} catch (InterruptedException e) {
 							e.printStackTrace();

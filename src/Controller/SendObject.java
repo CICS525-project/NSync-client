@@ -213,11 +213,17 @@ public class SendObject implements Serializable {
      * @param hash the hash to set
      */
     public void setHash() {
+    	
         try {
+        	
             if (event == EventType.Rename) {
-                this.hash = getChecksum(NSyncClient.dir.toString() + "\\" + this.filePath + "\\" + this.newFileName, "MD5");
+            	FileInputStream toBeHashed = new FileInputStream(NSyncClient.dir.toString() + "\\" + this.filePath + "\\" + this.newFileName);
+                this.hash = org.apache.commons.codec.digest.DigestUtils.md5Hex(toBeHashed); //getChecksum(NSyncClient.dir.toString() + "\\" + this.filePath + "\\" + this.newFileName, "MD5");
+                toBeHashed.close();
             } else {
-                this.hash = getChecksum(NSyncClient.dir.toString() + "\\" + this.filePath + "\\" + this.fileName, "MD5");
+            	FileInputStream toBeHashed = new FileInputStream(NSyncClient.dir.toString() + "\\" + this.filePath + "\\" + this.fileName);
+                this.hash = org.apache.commons.codec.digest.DigestUtils.md5Hex(toBeHashed); //getChecksum(NSyncClient.dir.toString() + "\\" + this.filePath + "\\" + this.fileName, "MD5");
+                toBeHashed.close();
             }
         } 
         catch(FileNotFoundException e){

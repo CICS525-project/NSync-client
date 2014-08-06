@@ -19,10 +19,11 @@ public class LocalFileManager {
 	public static void download(SendObject s) {
 		String filePath = UserProperties.getDirectory()
 				+ pathParser(s.getFilePath()) + s.getFileName();
-		System.out.println("File to be downloaded is " + pathParser(s.getFilePath()) + s.getFileName());
+		System.out.println("File to be downloaded is "
+				+ pathParser(s.getFilePath()) + s.getFileName());
 		BlobManager.downloadBlob(filePath);
-		File df = new File(filePath);
-		df.setLastModified(s.getTimeStamp().getTime());
+		File df = new File(filePath);		
+		df.setLastModified(s.getTimeStamp().getTime());		
 	}
 
 	public static void delete(SendObject s) {
@@ -45,25 +46,27 @@ public class LocalFileManager {
 		File oldname = new File(oldName);
 		File newname = new File(newName);
 		oldname.renameTo(newname);
-		
+
 		File df = new File(newName);
-		df.setLastModified(s.getTimeStamp().getTime());		
+		df.setLastModified(s.getTimeStamp().getTime());
 	}
-        /*
-        receives a SendObject associated with a file in conflict and copies it with the 
-        new name given to it as a string in second parameter.
-        */
-        
-        public static void copyConflictedFile(SendObject sendObject, String newName) throws IOException{
-            String filePath = UserProperties.getDirectory()
-				+ pathParser(sendObject.getFilePath()) + sendObject.getFileName();
-            String newFilePath = UserProperties.getDirectory()
+
+	/*
+	 * receives a SendObject associated with a file in conflict and copies it
+	 * with the new name given to it as a string in second parameter.
+	 */
+
+	public static void copyConflictedFile(SendObject sendObject, String newName)
+			throws IOException {
+		String filePath = UserProperties.getDirectory()
+				+ pathParser(sendObject.getFilePath())
+				+ sendObject.getFileName();
+		String newFilePath = UserProperties.getDirectory()
 				+ pathParser(sendObject.getFilePath()) + newName;
-            Files.copy(Paths.get(filePath), Paths.get(newFilePath), COPY_ATTRIBUTES);
-            
-        }
-        
-        
+		Files.copy(Paths.get(filePath), Paths.get(newFilePath), COPY_ATTRIBUTES);
+
+	}
+
 	private static String pathParser(String s) {
 		if (s == null) {
 			return "";
@@ -72,18 +75,14 @@ public class LocalFileManager {
 		}
 	}
 
-        /*
-	public static void main(String[] args){
-            SendObject sendObject = new SendObject("aaa.txt","",null, null, 
-            false, null);
-            try {
-                copyConflictedFile(sendObject, "bbb.txt");
-            } catch (IOException ex) {
-                Logger.getLogger(LocalFileManager.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        */
-        /*
+	/*
+	 * public static void main(String[] args){ SendObject sendObject = new
+	 * SendObject("aaa.txt","",null, null, false, null); try {
+	 * copyConflictedFile(sendObject, "bbb.txt"); } catch (IOException ex) {
+	 * Logger.getLogger(LocalFileManager.class.getName()).log(Level.SEVERE,
+	 * null, ex); } }
+	 */
+	/*
 	 * public static void main(String[] args) { SendObject s = new SendObject();
 	 * s.setFileName("poos.mp3"); //s.setNewFileName("poos.mp3"); delete(s);
 	 * //rename(s); }
