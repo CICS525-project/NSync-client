@@ -698,17 +698,25 @@ public class DBManagerLocal {
 		java.sql.Timestamp last_local_ts = null;
 		java.sql.Timestamp last_server_ts = null;
 		String file_id = obj.getID();
+                String file_name = obj.getFileName();
+                String file_path = obj.getFilePath();
 		boolean conflict = false;
 		Connection con = getConnection();
-
+                System.out.println("\n^^^^^^^^^conflict data file_id^^^^^^");
+                System.out.println("file id: " + file_id);
+                
 		try {
-			PreparedStatement ps = con.prepareStatement("SELECT last_local_update, last_server_update FROM files WHERE file_id = ?");
-			ps.setString(1, file_id);
+			PreparedStatement ps = con.prepareStatement("SELECT last_local_update, last_server_update FROM files WHERE file_name = ? AND file_path = ?");
+			ps.setString(1, file_name);
+                        ps.setString(2, file_path);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
 				last_local_ts = rs.getTimestamp(1);
 				last_server_ts = rs.getTimestamp(2);
-
+                                System.out.println("\n^^^^^^^^^conflict data^^^^^^");
+                                System.out.println("last local TS: " + last_local_ts);
+                                System.out.println("last server ts" + last_server_ts);
+                                System.out.println("server TS: " + server_ts);
 				if ((last_local_ts != server_ts)
 						|| (last_server_ts != server_ts)
 						|| (last_local_ts != last_server_ts)) {
