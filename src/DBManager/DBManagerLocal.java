@@ -720,7 +720,7 @@ public class DBManagerLocal {
                                 boolean a = last_local_ts != server_ts;
                                 boolean b = last_server_ts != server_ts;
                                 boolean c = last_local_ts != last_server_ts;
-				if ((a || b) && (a || c) && (b||c)) {
+				if ((a  && b) && c) {
 					System.out.println("CONFLICT EXISTS Last local Update______"
 									+ last_local_ts);
 					System.out.println("CONFLICT EXISTS Last server Update______"
