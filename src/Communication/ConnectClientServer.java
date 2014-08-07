@@ -44,6 +44,8 @@ public class ConnectClientServer {
 
 						// check if there is internet connection, if there is
 						// call the method to find another server
+						CommunicationManager.connectToServer();
+						TrayIconBasic.displayMessage("Server Down", "Trying to get another server. You may need to restart", TrayIcon.MessageType.WARNING);
 						try {
 							if (InetAddress.getByName("google.com")
 									.isReachable(3000)) {

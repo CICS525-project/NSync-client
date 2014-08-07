@@ -39,16 +39,7 @@ public class ClientUpdateRunnable {
 										// tries = 0;
 										break;
 									} else {
-										tries++;
-										if (tries == 5) {
-											TrayIconBasic
-													.displayMessage(
-															"Error",
-															"Someone else is using the resource you want to use. Please try again later. Your changes where not saved to the server",
-															TrayIcon.MessageType.ERROR);
-											tries = 0;
-											break;
-										}
+										
 										continue;
 									}
 
@@ -57,6 +48,16 @@ public class ClientUpdateRunnable {
 											.println("Permission not granted");
 									e.printStackTrace();
 									Thread.sleep(5000);
+									tries++;
+									if (tries == 5) {
+										TrayIconBasic
+												.displayMessage(
+														"Error",
+														"Someone else is using the resource you want to use. Please try again later. Your changes where not saved to the server",
+														TrayIcon.MessageType.ERROR);
+										tries = 0;
+										break;
+									}
 									continue;
 
 								}
