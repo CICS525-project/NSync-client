@@ -226,11 +226,10 @@ public class SendObject implements Serializable {
                         NSyncClient.dir.toString() + "\\" + this.filePath
                         + "\\" + this.newFileName);
                 if (f.exists()) {
-                    this.hash = org.apache.commons.codec.digest.DigestUtils
-                            .md5Hex(toBeHashed); // getChecksum(NSyncClient.dir.toString()
-                } // + "\\" + this.filePath +
-                // "\\" + this.newFileName,
-                // "MD5");
+                    this.hash =  getChecksum(NSyncClient.dir.toString()
+                  + "\\" + this.filePath +
+                 "\\" + this.newFileName,
+                 "MD5");}
                 else {
                     this.hash = null;
                 }
@@ -242,11 +241,10 @@ public class SendObject implements Serializable {
                         NSyncClient.dir.toString() + "\\" + this.filePath
                         + "\\" + this.fileName);
                 if (f.exists()) {
-                    this.hash = org.apache.commons.codec.digest.DigestUtils
-                            .md5Hex(toBeHashed); // getChecksum(NSyncClient.dir.toString()
-                } else // + "\\" + this.filePath + "\\"
+                    this.hash =  getChecksum(NSyncClient.dir.toString()+ "\\" + this.filePath + "\\"+ this.fileName, "MD5");
+                } else  
                 {
-                    this.hash = null; // + this.fileName, "MD5");
+                    this.hash = null;  
                 }
                 toBeHashed.close();
             }
