@@ -37,13 +37,13 @@ public class LocalFileManager {
 
 	public static void rename(SendObject s) {
 		
-		File f = new File(UserProperties.getDirectory()
+	/*	File f = new File(UserProperties.getDirectory()
 				+ pathParser(s.getFilePath()) + s.getFileName());
 		if(!f.exists()) {
 			BlobManager.downloadBlob(UserProperties.getDirectory()
 					+ pathParser(s.getFilePath()) + s.getNewFileName());
 			return;
-		}
+		} */
 
 		String oldName = UserProperties.getDirectory()
 				+ pathParser(s.getFilePath()) + s.getFileName();
